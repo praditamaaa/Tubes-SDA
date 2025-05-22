@@ -10,9 +10,8 @@
 - ⚔️ **Turn-Based Action Combat**: Sistem pertarungan strategis berbasis giliran dengan berbagai jenis senjata dan skill.
 - 👥 **Karakter Unik & Evolusi**: Setiap karakter memiliki jalur evolusi dan pengembangan yang berbeda.
 - 🌱 **Skill Tree**: Pilih dan kembangkan jalur kemampuan sesuai gaya bermainmu.
-- 📜 **Quest System**: Ikuti alur cerita utama atau bantu NPC melalui side quest yang menarik.
-- 🗺️ **Peta Dinamis**: Navigasi dunia menggunakan peta yang terus berkembang.
-- 🎯 **Sistem Level & Item** *(planned)*: Sistem leveling, looting, dan crafting akan diimplementasikan pada versi selanjutnya.
+- 📜 **Quest System**: Jalankan quest untuk mendapatkan hadiak menarik!
+- 🎯 **Sistem Level & Item**: Sistem leveling, equipment, dan item untuk meningkatkan permainan anda!
 
 ---
 
