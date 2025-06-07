@@ -1,3 +1,11 @@
+/*
+.| Program : skilltree_builder.c
+.| Header yang berisikan modul untuk membuat SkillTree
+.| dengan data dari skilltree.h
+.|
+.| Oleh : Radhitya Maulana Arrafi
+*/
+
 #ifndef SKILLTREE_BUILDER_H
 #define SKILLTREE_BUILDER_H
 
