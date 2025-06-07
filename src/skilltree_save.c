@@ -127,21 +127,24 @@ int saveSkillTree(SkillTree *root, CharType charType) {
 void loadNodeData(SkillTree *root, FILE *file, int nodeCount) {
     NodeSaveData data;
     
-    for (int i = 0; i < nodeCount; i++) {
+    int i = 0;
+    while (i < nodeCount) {
         if (fread(&data, sizeof(NodeSaveData), 1, file) != 1) {
             printf("Error reading node data\n");
             return;
         }
-        
+    
         // Cari node dengan ID yang sesuai
         int currentId = 0;
         SkillTree *targetNode = findNodeById(root, data.nodeId, &currentId);
-        
+    
         if (targetNode != NULL && targetNode->node->nodeType == data.nodeType) {
-            targetNode->isUnlocked = data.isUnlocked;
+        targetNode->isUnlocked = data.isUnlocked;
         } else {
             printf("Warning: Node with ID %d not found or type mismatch\n", data.nodeId);
         }
+    
+        i++;  // Increment counter
     }
 }
 
@@ -215,12 +218,14 @@ int createDefaultSaveFile(CharType charType) {
     fwrite(&charType, sizeof(CharType), 1, file);
     
     // Tulis data default (semua node locked kecuali root)
-    for (int i = 0; i < nodeCount; i++) {
+    int i = 0;
+    while (i < nodeCount) {
         NodeSaveData data;
         data.nodeId = i;
         data.isUnlocked = (i == 0) ? 1 : 0; // Hanya root yang unlocked
         data.nodeType = BASIC_ADDITION; // Default type
         fwrite(&data, sizeof(NodeSaveData), 1, file);
+        i++;
     }
     
     fclose(file);
