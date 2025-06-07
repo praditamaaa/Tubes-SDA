@@ -29,7 +29,7 @@ SkillTree *newBasicNode(CharType type, const char *desc, int value){
     return node;
 }
 
-SkillTree *newPercentageNode(CharType type, const char *desc, float percentage) {
+SkillTree *newPrecentageNode(CharType type, const char *desc, float percentage) {
     SkillTree *node = malloc(sizeof(SkillTree));
     node->charType = type;
     node->isUnlocked = 0;
@@ -66,12 +66,12 @@ SkillTree *newSkillNode(CharType type, const char *skillName, int power, float s
     return node;
 }
 
-void connectChild(SkillTree *parent, SkillTree *child) {
+SkillTree *connectChild(SkillTree *parent, SkillTree *child){
     parent->firstSon = child;
     child->parent = parent;
 }
 
-void connectBrother(SkillTree *left, SkillTree *right) {
+SkillTree *connectBrother(SkillTree *left, SkillTree *right) {
     left->nextBrother = right;
     right->parent = left->parent; // Asumsikan satu parent
 }
