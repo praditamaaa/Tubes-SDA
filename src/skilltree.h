@@ -1,3 +1,10 @@
+/*
+.| Program : skilltree.h
+.| Berisi data-data variabel yang dibutuhkan untuk Skill Tree
+.| 
+.| Oleh : Radhitya Maulana Arrafi
+*/
+
 #ifndef SKILLTREE_H
 #define SKILLTREE_H
 
