@@ -1,3 +1,14 @@
+/*
+.| Program : skilltree_builder.c
+.| Berisi logika atau isi modul skilltree_builder.h 
+.| menggunakan data-data dari header skilltree.h
+.|
+.| Tujuan : Mebuat logika yang berkaitan dengan 
+.| 			pembuatan SkillTree di skilltree.c
+.|
+.| Oleh : Radhitya Maulana Arrafi
+*/
+
 #include "skilltree_builder.h"
 
 SkillTree *newBasicNode(CharType type, const char *desc, int value){
