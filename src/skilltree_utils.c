@@ -86,8 +86,10 @@ void printSkillTreeStatus(SkillTree *root, int level) {
     if (root == NULL) return;
     
     // Print indentasi berdasarkan level
-    for (int i = 0; i < level; i++) {
+    int i = 0;
+    while(i < level){
         printf("  ");
+        i++;
     }
     
     // Print status node
@@ -124,8 +126,9 @@ void printSkillTreeStatus(SkillTree *root, int level) {
 int getUnlockableNodes(SkillTree *root, int *unlockableIds, int maxIds) {
     int count = 0;
     int totalNodes = countNodes(root);
-    
-    for (int i = 0; i < totalNodes && count < maxIds; i++) {
+
+    int i = 0;
+    while(i < totalNodes && count < maxId){
         if (canUnlockNode(root, i)) {
             unlockableIds[count] = i;
             count++;
