@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define WIDTH 80
-#define HEIGHT 25
+#define WIDTH 100
+#define HEIGHT 100
 
 typedef enum {
     TILE_EMPTY,
