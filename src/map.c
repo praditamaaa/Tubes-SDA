@@ -26,41 +26,59 @@ void initMap(Map *map){
 	}
 	
 	// Proses Penambahan Tile untuk QUEST
-	int questQ, questLocX, questLocY, countQuest;
-	questQ = rand() %10 + 1;
-	countQuest = 0;
-	
-	while(countQuest < questQ){
-		questLocX = rand() %21;
-		questLocY = rand() %21;
-		
-		while(map->tiles[questLocX][questLocY] != TILE_EMPTY && questLocX == map->startX && questLocY == map->startY){
-			questLocX = rand() %21;
-			questLocY = rand() %21;
-		}
-		
-		setTile(map, questLocX, questLocY, TILE_QUEST);
-		
-		countQuest++;
+	int questQ = rand() % 20 + 1;			// Menentukan Kuantitas TILE_QUEST
+	int questLocX, questLocY, countQuest = 0;
+	bool usedRows[HEIGHT] = {false};	// Menyimpan info baris yang sudah dipakai
+
+	while (countQuest < questQ && countQuest < HEIGHT) {  // Maksimal = jumlah baris
+    		questLocY = rand() %HEIGHT;
+
+    		// Jika baris sudah dipakai, cari baris lain
+    		while (usedRows[questLocY]) {
+        		questLocY = rand() %HEIGHT;
+    		}
+
+    		questLocX = rand() %WIDTH;
+
+    		// Pastikan tile kosong dan bukan di posisi start
+    		while (map->tiles[questLocX][questLocY] != TILE_EMPTY || questLocX == map->startX && questLocY == map->startY)) {
+        		questLocX = rand() %WIDTH;
+    		}
+
+    		// Set tile quest
+    		setTile(map, questLocX, questLocY, TILE_QUEST);
+
+    		// Tandai baris ini sudah digunakan
+    		usedRows[questLocY] = true;
+	    	countQuest++;
 	}
 	
-	// Orises Penambahan Tile untuk SHOP
-	int shopQ, shopLocX, shopLocY, countShop;
-	shopQ = rand() &5 + 1;
-	countShop = 0;
-	
-	while(countShop < shopQ){
-		shopLocX = rand() %21;
-		shopLocX = rand() %21;
-		
-		while(map->tiles[shopLocX][shopLocY] != TILE_EMPTY && shopLocX == map->startX && shopLocY == map->startY){
-			shopLocX = rand() %21;
-			shopLocY = rand() %21;
-		}
-		
-		setTile(map, shopLocX, shopLocY, TILE_SHOP);
-		
-		countShop++;
+	// Proses Penambahan Tile untuk SHOP
+	int shopQ = rand() % 20 + 1;			// Menentukan Kuantitas TILE_SHOP
+	int shopLocX, shopLocY, countShop = 0;
+	bool usedRows[HEIGHT] = {false};	// Menyimpan info baris yang sudah dipakai
+
+	while (countShop < shopQ && countShop < HEIGHT) {  // Maksimal = jumlah baris
+    		shopLocY = rand() %HEIGHT;
+
+    		// Jika baris sudah dipakai, cari baris lain
+    		while (usedRows[shopLocY]) {
+        		shopLocY = rand() %HEIGHT;
+    		}
+
+    		shopLocX = rand() %WIDTH;
+
+    		// Pastikan tile kosong dan bukan di posisi start
+    		while (map->tiles[shopLocX][shopLocY] != TILE_EMPTY || shopLocX == map->startX && shopLocY == map->startY)) {
+        		shopLocX = rand() %WIDTH;
+    		}
+
+    		// Set tile shop
+    		setTile(map, shopLocX, shopLocY, TILE_QUEST);
+
+    		// Tandai baris ini sudah digunakan
+    		usedRows[shopLocY] = true;
+    		countShop++;
 	}
 		
 }
