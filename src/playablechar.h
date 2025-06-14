@@ -13,7 +13,7 @@ typedef struct tChar{
 	int Def;
 	int Lvl;
 	int isDefending;
-	Skilltree skillChar;
+	SkillTree skillChar;
 	addressItem inventory;
 }tChar;
 
