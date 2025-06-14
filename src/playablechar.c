@@ -76,7 +76,7 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att,int *Def,int *Lvl) {
 }
 
 void tambahItemKeKarakter(addressChar* karakter, addressItem* I){
-	addressItem baru;
+    addressItem baru;
     buatItem(&baru);
     Isi_item(&baru, (*I)->item, (*I)->bag, (*I)->Type, (*I)->effect);
     tambahItem(&((*karakter)->inventory), baru);
