@@ -1,18 +1,13 @@
 #ifndef NAVIGASI_H
 #define NAVIGASI_H
 
+#include "display.h"
+#include "common.h"
 #include "map.h"
-#include "enemy.h"	// Setiap kali pengguna bergerak, akan ada kemungkinan untuk bertemu dengan musuh (menggunakan sistem randomize)
 #include "shop.h"
-#include "quest.h"
+#include "enemy.h"	// Setiap kali pengguna bergerak, akan ada kemungkinan untuk bertemu dengan musuh (menggunakan sistem randomize)
 
-typedef enum{
-	UP,
-	RIGHT,
-	DOWN,
-	LEFT,
-}Direction;
-
-void movePlayer(Map *map, Direction dir);
+void movePlayer(Map *map, Direction dir, addressChar* k, addressShopItem shop[]);
+bool checkEncounter();
 
 #endif
