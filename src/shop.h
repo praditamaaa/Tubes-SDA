@@ -6,11 +6,12 @@
 typedef struct tIshop addressShopItem;
 
 typedef struct tIshop {
-	ItemType Type;
-	infotype item;
-	Effect effect;
-	int stock;
-}tIshop;
+    ItemType Type;          // Changed from Type to type (lowercase)
+    infotype item;
+    Effect effect;
+    int stock;
+    int price;              // Added price field
+} tIshop;
 
 void tambahkanItem(addressShopItem shop[]);
 void tampilkanItem(addressShopItem shop[]);
