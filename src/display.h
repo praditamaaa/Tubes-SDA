@@ -9,6 +9,9 @@
 #include "playablechar.h"
 #include "figure.h"
 
+void calculateOffset();
+void initCenteredDisplay();
+void refreshDisplay(const Map *map, addressChar karakter);
 void drawBorder();
 void drawMap(const Map *map);
 void drawUI(const Map *map, addressChar karakter);
@@ -18,4 +21,3 @@ void drawShopUI(addressChar *k, addressShopItem shop[]);
 void gameLoop(Map *map, addressChar k, addressShopItem shop[]);
 
 #endif
-
