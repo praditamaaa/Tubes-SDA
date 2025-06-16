@@ -192,7 +192,7 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
         drawCombatAt(marginX + (availableWidth / 2 - 15), 0);
         
         // ====== TAMPILKAN ENEMY FIGURE DI TENGAH KOTAK BESAR ======
-        int enemyX = marginX + (availableWidth / 2 - 15); // Posisi X untuk enemy (tengah)
+        int enemyX = marginX + (availableWidth / 2 - 15);
         int enemyY = marginY + 7; // Posisi Y untuk enemy
         
         // Tampilkan ASCII art berdasarkan tipe enemy
@@ -363,7 +363,7 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
             
             //4 kotak kecil di bawah
             int smallBoxHeight = availableHeight - bigBoxHeight - 6;
-            int smallBoxWidth = (availableWidth - 6) / 4; // 6 = spacing antar kotak
+            int smallBoxWidth = (availableWidth - 6) / 4;\
             int smallBoxY = marginY + bigBoxHeight + 1 + 7;
             
             // Kotak 1
@@ -413,7 +413,7 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
             // Update ukuran terakhir
             lastWidth = termWidth;
             lastHeight = termHeight;
-            shopMode = 1; // Set ke mode interaktif
+            shopMode = 1; 
         }
         
         // Handle input dari user
@@ -426,13 +426,13 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
                 case 'B':
                     pembelianItemShop(k, shop);
                     clearInputArea();
-                    shopMode = 0; // Trigger redraw untuk update stock
+                    shopMode = 0; 
                     break;
                     
                 case 'q':
                 case 'Q':
                 	clearScreen();
-                    return; // Keluar dari shop
+                    return; 
                     
                 default:
                     gotoxy(113, 22);
