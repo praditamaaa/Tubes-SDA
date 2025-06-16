@@ -1,28 +1,25 @@
 #ifndef MAP_H
 #define MAP_H
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#define WIDTH 100
-#define HEIGHT 100
+#include "common.h"
 
 typedef enum {
-    TILE_EMPTY,
-    TILE_WALL,
-    TILE_PLAYER,
-    TILE_QUEST,
-    TILE_SHOP,
-}TileType;
+    TILE_EMPTY = ' ',
+    TILE_WALL = 'X',
+    TILE_PLAYER = '@',
+    TILE_ENEMY = 'E',
+    TILE_SHOP = '+',
+    TILE_QUEST = '?'
+} TileType;
 
 typedef struct {
-    TileType tiles[HEIGHT][WIDTH];
-    int startX, startY;
-}Map;
+    TileType tiles[WORLD_HEIGHT][WORLD_WIDTH];
+    int playerX, playerY;  // koordinat player di map
+    int cameraX, cameraY;  // posisis pov di map
+} Map;
 
 void initMap(Map *map);
-void setTile(Map *map, int x, int y, TilesType type);
-TileType getTile(const Map *map, int x, int y,);
-// Fungsi Menampilkan Peta akan berada di header Display
+void setTile(Map *map, int x, int y, TileType newTiles);
+TileType getTile(const Map *map, int x, int y);
+void updateCamera(Map *map);  // fungsi buat pov
 
 #endif
