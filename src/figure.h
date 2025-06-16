@@ -3,7 +3,6 @@
 
 #include "common.h"
 
-void drawMythorAt(int startX, int startY);
 void drawCombatAt(int startX, int startY);
 void drawShopAt(int startX, int startY);
 void drawGoblinAt(int startX, int startY);
