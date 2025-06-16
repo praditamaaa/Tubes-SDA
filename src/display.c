@@ -6,18 +6,18 @@ void drawBorder() {
     // border atas dan bawah
     int x, y;
     while(x <= WIDTH + 1){
-    	gotoxy(x, 0);
+    	gotoxy(x + 30, 0);
         printf(WHITE_BG " " RESET);
-        gotoxy(x, HEIGHT + 1);
+        gotoxy(x + 30, HEIGHT + 1);
         printf(WHITE_BG " " RESET);
         x++;
 	}
     
     // border kiri dan kanan
     while(y <= HEIGHT + 5){
-    	gotoxy(0, y);
+    	gotoxy(30, y);
         printf(WHITE_BG " " RESET);
-        gotoxy(WIDTH + 1, y);
+        gotoxy(WIDTH + 31, y);
         printf(WHITE_BG " " RESET);
         y++;
 	}
@@ -25,7 +25,7 @@ void drawBorder() {
 
 void drawMap(const Map *map) {
     for (int screenY = 0; screenY < HEIGHT; screenY++) {
-        gotoxy(1, screenY + 1);
+        gotoxy(31, screenY + 1);
         for (int screenX = 0; screenX < WIDTH; screenX++) {
             // Konversi koordinat screen ke koordinat map
             int worldX = map->cameraX + screenX;
@@ -69,16 +69,16 @@ void drawMap(const Map *map) {
 
 void drawUI(const Map *map, addressChar karakter) {
     setColor(11); // biru muda
-    gotoxy(2, HEIGHT + 2);
+    gotoxy(32, HEIGHT + 2);
     printf(" Use WASD or arrow keys to move, 'Z' to interact.");
-    gotoxy(2, HEIGHT + 3);
+    gotoxy(32, HEIGHT + 3);
     printf(" Press 'ESC' to pause, 'Q' to quit.              ");
-    gotoxy(0, HEIGHT + 5);
-    for (int i = 0; i <= WIDTH + 1; i++) {
+    gotoxy(31, HEIGHT + 5);
+    for (int i = 30; i <= WIDTH + 31; i++) {
         printf(WHITE_BG " " RESET);
     }
     
-    int x = WIDTH + 2;
+    int x = WIDTH + 32;
     int y = 0;
     
     gotoxy(86,0);
@@ -86,13 +86,13 @@ void drawUI(const Map *map, addressChar karakter) {
     gotoxy(86, HEIGHT + 1);
 	printf(WHITE_BG " " RESET);	
     
-    gotoxy(x, 6);
+    gotoxy(x, 2);
     printf("HP : %d\n", karakter->Hp);
-	gotoxy(x, 7);
+	gotoxy(x, 3);
 	printf("LEVEL : %d\n", karakter->Lvl);
     
     // border atas bawah
-    while(x <= 85){
+    while(x <= 115){
     	gotoxy(x, 0);
         printf(WHITE_BG " " RESET);
         gotoxy(x, 5);
@@ -106,16 +106,20 @@ void drawUI(const Map *map, addressChar karakter) {
     while(y <= HEIGHT + 5){
     	//gotoxy(WIDTH + 3, y + 1);
         //printf("|");
-        gotoxy(86, y);
+        gotoxy(116, y);
         printf(WHITE_BG " " RESET);
         y++;
 	}
        
     // info kamera dan koordinat player
     setColor(14); //kuning
-    gotoxy(0, HEIGHT + 6);
+    gotoxy(30, HEIGHT + 6);
     printf("# Player: (%d,%d) | Camera: (%d,%d) | World: %dx%d         #", 
            map->playerX, map->playerY, map->cameraX, map->cameraY, WORLD_WIDTH, WORLD_HEIGHT);
+           
+    gotoxy(30, HEIGHT + 7);
+    setColor(15);
+    printf("Camera/Viewport System - Explore the %dx%d world!", WORLD_WIDTH, WORLD_HEIGHT);
 }
 
 void drawBox(int startX, int startY, int width, int height) {
@@ -189,19 +193,19 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
             y++;
         }
         
-        drawCombatAt(marginX + (availableWidth / 2 - 15), 0);
+        //drawCombatAt(marginX + (availableWidth / 2 - 15), 0);
         
         // ====== TAMPILKAN ENEMY FIGURE DI TENGAH KOTAK BESAR ======
-        int enemyX = marginX + (availableWidth / 2 - 15);
+        int enemyX = marginX + (availableWidth / 2 - 15); // Posisi X untuk enemy (tengah)
         int enemyY = marginY + 7; // Posisi Y untuk enemy
         
         // Tampilkan ASCII art berdasarkan tipe enemy
         switch(enemy->Type) {
             case SLIME:
-                drawSlimeAt(enemyX, enemyY);
+                drawSlimeAt(enemyX - 15, enemyY - 5);
                 break;
             case WOLF:
-                drawWolfAt(enemyX, enemyY);
+                drawWolfAt(enemyX - 5, enemyY - 6);
                 break;
             case GOBLIN:
                 drawGoblinAt(enemyX, enemyY);
@@ -222,13 +226,14 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
         printf("DEF: %d", (*k)->Def);
         
         // Status Enemy (kanan atas)
-        int enemyStatusX = marginX + availableWidth - 25;
+        int enemyStatusX = marginX - 10 + availableWidth - 25;
         gotoxy(enemyStatusX, marginY + 1);
         printf("=== ENEMY STATUS ===");
         gotoxy(enemyStatusX, marginY + 2);
         printf("Type: %s", 
                (enemy->Type == SLIME) ? "SLIME" :
                (enemy->Type == WOLF) ? "WOLF" : "GOBLIN");
+               
         gotoxy(enemyStatusX, marginY + 3);
         printf("Level: %d", enemy->Lv);
         gotoxy(enemyStatusX, marginY + 4);
@@ -279,19 +284,19 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
             char input = getch();
             switch(input) {
                 case '1':
-                    gotoxy(0, termHeight - 1);
+                    gotoxy(marginX + 4, termHeight - 15);
                     printf("Attack selected! Press any key to continue...");
                     getch(); 
                     clearScreen(); 
                     return; 
                 case '2':
-                    gotoxy(0, termHeight - 1);
+                    gotoxy(marginX + 4, termHeight - 15);
                     printf("Defense selected! Press any key to continue...");
                     getch();
                     clearScreen();
                     return;
                 case '3':
-                    gotoxy(0, termHeight - 1);
+                    gotoxy(marginX + 4, termHeight - 15);
                     printf("Use Item selected! Press any key to continue...");
                     getch();
                     clearScreen();
@@ -299,7 +304,7 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
                 case '4':
                 case 'e':
                 case 'E':
-                    gotoxy(0, termHeight - 1);
+                    gotoxy(marginX + 4, termHeight - 15);
                     printf("Escape selected! Press any key to continue...");
                     getch();
                     clearScreen();
@@ -308,7 +313,7 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
                 case 'q':
                 case 'Q':
                 case 27: 
-                    gotoxy(0, termHeight - 1);
+                    gotoxy(marginX + 4, termHeight - 15);
                     printf("Exiting combat... Press any key to continue...");
                     getch();
                     clearScreen();
@@ -363,7 +368,7 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
             
             //4 kotak kecil di bawah
             int smallBoxHeight = availableHeight - bigBoxHeight - 6;
-            int smallBoxWidth = (availableWidth - 6) / 4;\
+            int smallBoxWidth = (availableWidth - 6) / 4; // 6 = spacing antar kotak
             int smallBoxY = marginY + bigBoxHeight + 1 + 7;
             
             // Kotak 1
@@ -413,7 +418,7 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
             // Update ukuran terakhir
             lastWidth = termWidth;
             lastHeight = termHeight;
-            shopMode = 1; 
+            shopMode = 1; // Set ke mode interaktif
         }
         
         // Handle input dari user
@@ -426,13 +431,13 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
                 case 'B':
                     pembelianItemShop(k, shop);
                     clearInputArea();
-                    shopMode = 0; 
+                    shopMode = 0; // Trigger redraw untuk update stock
                     break;
                     
                 case 'q':
                 case 'Q':
                 	clearScreen();
-                    return; 
+                    return; // Keluar dari shop
                     
                 default:
                     gotoxy(113, 22);
@@ -455,10 +460,6 @@ void gameLoop(Map *map, addressChar k, addressShopItem shop[]) {
     drawBorder();
     drawMap(map);
     drawUI(map,k);
-    
-    gotoxy(0, HEIGHT + 7);
-    setColor(15);
-    printf("Camera/Viewport System Test - Explore the %dx%d world!", WORLD_WIDTH, WORLD_HEIGHT);
     
     while (running) {
         if (_kbhit()) {
@@ -508,10 +509,9 @@ void gameLoop(Map *map, addressChar k, addressShopItem shop[]) {
                 key == 'a' || key == 'A' || key == 75 ||
                 key == 'd' || key == 'D' || key == 77) {
                 drawMap(map);
-                drawUI(map, k);
+                drawUI(map,k);
             }
         } else {
-            
             drawBorder();
         }
         Sleep(50); 
