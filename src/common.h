@@ -20,7 +20,7 @@
 #define WORLD_WIDTH 100
 #define WORLD_HEIGHT 100
 
-#define ITEM 7
+#define ITEM 3
 
 typedef char infotype[100];
 
@@ -36,52 +36,29 @@ typedef enum{
 
 typedef enum {
     HealPotion,
-    SPBoost,
-    AttackUp,
-    DefenseUp,
-    StunItem,
-    ExtraTurnBoots,
-    SplashPoison
+    BurnPotion,     
+    FreezePotion
 } ItemType;
+
+typedef enum{
+	STATUS_BURN,
+	STATUS_FREEZE
+}StatusType;
 
 typedef struct {
     int amount;
 } EffectHeal;
 
-typedef struct {
-    int amount;
-} EffectSP;
-
-typedef struct {
-    int amount;
-} EffectAttack;
-
-typedef struct {
-    int amount;
-} EffectDefense;
-
-typedef struct {
-    int duration;
-} EffectStun;
-
-typedef struct {
-    int turns;
-} EffectExtraTurn;
-
-typedef struct {
-    int active;
-} EffectPoison;
+typedef struct{
+	StatusType type;
+	int damage;
+	int duration;
+}StatusEffect;
 
 typedef struct {
     EffectHeal heal;
-    EffectSP sp;
-    EffectAttack attack;
-    EffectDefense defense;
-    EffectStun stun;
-    EffectExtraTurn extraTurn;
-    EffectPoison burn;
+    StatusEffect status;
 }Effect;
-
 
 typedef struct tItem {
     infotype item;
@@ -92,5 +69,12 @@ typedef struct tItem {
     addressItem prev;
 } tItem;
 
-#endif
+void clearScreen();
+void gotoxy(int x, int y);
+void setColor(int color);
+void hideCursor();
+void getTerminalSize(int *width, int *height);
+void printCenteredAtRow(const char* text, int row);
+void clearInputArea();
 
+#endif
