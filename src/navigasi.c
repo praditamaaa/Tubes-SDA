@@ -1,54 +1,82 @@
 #include "navigasi.h"
 
-void movePlayer(Map *map, Direction dir){
-	// Mendapatkan posisi player saat ini dari map
-	int currx, curry;
-	currx = map->startX;
-	curry = map->startY;
-	
-	// Membuat variabel baru untuk posisi setelah pemain bergerak
-	int newx, newy;
-	newx = currx;
-	newy = curry;
-	
-	switch (dir){
-	case UP:
-		newx -= 1;
-		break;
-	case RIGHT:
-		newy += 1;
-		break;
-	case DOWN:
-		newx += 1;
-		break;
-	case LEFT:
-		newy -= 1;
-		break;
-	}
-	
-	if (newx >= 0 && newx < HEIGHT && newy >= 0 && newy < WIDTH && map->tiles[newx][newy] != TILE_WALL) {
-        // Cek apakah encounter terjadi
-        if (checkEncounter()){
-            // Encounter! Tidak pindah, tapi langsung masuk ke mode battle
-            setTile(map, newx, newy, TILE_ENEMY);
-            printf("Musuh muncul! Masuk mode battle.\n");
-            // (Panggil sistem pertarungan di sini)
-            return;
-        }else if(map->tiles[newx][newy] == TILE_SHOP){
-        	// BUKA SHOP
-        	return;
-		}else if(map->tiles[newx][newy] == TILE_QUEST){
-			// ALUR SISTEMATIKA QUEST
-			return;
-		}
-
-        // Tidak ada encounter, lanjutkan gerakan
-        setTile(map, currx, curry, TILE_EMPTY);
-        setTile(map, newx, newy, TILE_PLAYER);
-        map->startX = newx;
-        map->startY = newy;
+void movePlayer(Map *map, Direction dir, addressChar* k, addressShopItem shop[]) {
+    int currX = map->playerX;
+    int currY = map->playerY;
+    
+    int newX = currX;
+    int newY = currY;
+    
+    switch (dir) {
+        case UP:
+            newY -= 1;
+            break;
+        case RIGHT:
+            newX += 1;
+            break;
+        case DOWN:
+            newY += 1;
+            break;
+        case LEFT:
+            newX -= 1;
+            break;
     }
     
-    
-	
+    // Check boundaries and collision in world coordinates
+    if (newX >= 0 && newX < WORLD_WIDTH && newY >= 0 && newY < WORLD_HEIGHT && 
+        getTile(map, newX, newY) != TILE_WALL) {
+        
+        // Check encounter
+        if (checkEncounter()) {
+            gotoxy(30, HEIGHT + 6);
+            setColor(12); // Red
+            printf("Musuh muncul! Masuk mode battle.                    ");
+            Sleep(1500);
+            
+            // Buat enemy dan mulai battle
+            Enemy enemy;
+            EnemyType randomType = rand() % 3; // 0=SLIME, 1=WOLF, 2=GOBLIN
+            initEnemy(&enemy, randomType, *k);
+             
+            // Mulai battle 
+			drawCombatUi(k, &enemy); //ini ketika musuh lari atau kita escape loop berhenti
+            clearScreen();
+            gotoxy(30, HEIGHT + 6);
+            printf("                                                    ");
+            return;
+        } 
+        else if (getTile(map, newX, newY) == TILE_SHOP) {
+            gotoxy(30, HEIGHT + 6);
+            setColor(10); // Green
+            printf("Entering shop...                                    ");
+            Sleep(1000);
+			drawShopUI(k, shop); 
+            clearScreen();
+            gotoxy(30, HEIGHT + 6);
+            printf("                                                    ");
+            return;
+        } 
+        else if (getTile(map, newX, newY) == TILE_QUEST) {
+            gotoxy(30, HEIGHT + 6);
+            setColor(13); // Magenta
+            printf("Quest found!                                        ");
+            Sleep(1000);
+            //tempat quest dipanggil
+            gotoxy(30, HEIGHT + 6);
+            printf("                                                    ");
+        }
+        
+        // PERGERKAN 
+        setTile(map, currX, currY, TILE_EMPTY);
+        setTile(map, newX, newY, TILE_PLAYER);
+        map->playerX = newX;
+        map->playerY = newY;
+        
+        // UPDATE KAMERA AGAR IKUT PLAYER
+        updateCamera(map);
+    }
+}
+
+bool checkEncounter() {
+    return (rand() % 100) < 5; 
 }
