@@ -1,47 +1,27 @@
 #include "shop.h"
 
 void tambahkanItem(addressShopItem shop[]){
-    shop[0].Type = HealPotion;
-    strcpy(shop[0].item, "Potion of Healing");
+	shop[0].Type = HealPotion;
+    strcpy(shop[0].item, "Healing Potion");
     shop[0].effect.heal.amount = 50;
     shop[0].stock = 5;
+    shop[0].price = 25;
 
-    shop[1].Type = SPBoost;
-    strcpy(shop[1].item, "SP Elixir");
-    shop[1].effect.sp.amount = 40;
-    shop[1].stock = 3;
+    shop[1].Type = BurnPotion;
+    strcpy(shop[1].item, "Fire Potion");
+    shop[1].effect.status.type = STATUS_BURN;
+    shop[1].effect.status.damage = 15;
+    shop[1].effect.status.duration = 3;
+    shop[1].stock = 4;
+    shop[1].price = 45;
 
-    shop[2].Type = AttackUp;
-    strcpy(shop[2].item, "Attack Potion");
-    shop[2].effect.attack.amount = 30;
-    shop[2].stock = 2;
-    
-    shop[3].Type = DefenseUp;
-    strcpy(shop[3].item, "Defense Potion");
-    shop[3].effect.defense.amount = 30;
-    shop[3].stock = 5;
-
-    shop[4].Type = StunItem;
-    strcpy(shop[4].item, "Stun Item");
-    shop[4].effect.stun.duration = 1;
-    shop[4].stock = 3;
-
-    shop[5].Type = ExtraTurnBoots;
-    strcpy(shop[5].item, "Boots");
-    shop[5].effect.extraTurn.turns = 2;
-    shop[5].stock = 2;
-    
-    shop[6].Type = SplashPoison;
-    strcpy(shop[6].item, "Potion Splash");
-    shop[6].effect.burn.active = 1;
-    shop[6].stock = 5;
-}
-
-void tampilkanItem(addressShopItem shop[]) {
-	printf("======== SHOP ========\n");
-    for (int i = 0; i < ITEM; i++) {
-        printf("%d. Nama Item: %s (Stok: %d)\n", i + 1, shop[i].item, shop[i].stock);
-    }
+    shop[2].Type = FreezePotion;
+    strcpy(shop[2].item, "Ice Potion");
+    shop[2].effect.status.type = STATUS_FREEZE;
+    shop[2].effect.status.damage = 10;
+    shop[2].effect.status.duration = 2;
+    shop[2].stock = 3;
+    shop[2].price = 50;
 }
 	
 void pakaiItem(addressShopItem i){
@@ -49,79 +29,132 @@ void pakaiItem(addressShopItem i){
         case HealPotion:
             printf(">> Menyembuhkan HP sebanyak %d poin.\n", i.effect.heal.amount);
             break;
-        case SPBoost:
-            printf(">> Menambah SP sebanyak %d poin.\n", i.effect.sp.amount);
+        case BurnPotion:
+        	printf(">> Membakar musuh selama %d turn.\n", i.effect.status.duration);
             break;
-        case AttackUp:
-            printf(">> Meningkatkan Attack sebanyak %d poin.\n", i.effect.attack.amount);
-            break;
-        case DefenseUp:
-            printf(">> Meningkatkan Defense sebanyak %d poin.\n", i.effect.defense.amount);
-            break;
-        case StunItem:
-            printf(">> Musuh terkena stun selama %d giliran.\n", i.effect.stun.duration);
-            break;
-        case ExtraTurnBoots:
-            printf(">> Mendapat tambahan %d giliran beruntun.\n", i.effect.extraTurn.turns);
-            break;
-        case SplashPoison:
-            if (i.effect.burn.active)
-                printf(">> Musuh terkena racun!\n");
-            else
-                printf(">> Racun gagal aktif.\n");
+        case FreezePotion:
+        	printf(">> Membekukan musuh selama %d turn.\n", i.effect.status.duration);
             break;
         default:
             printf(">> Tidak ada efek.\n");
     }
 }
 
+void tampilkanItem(addressShopItem shop[]) {   
+    int Xawal = 113;  
+    int Yawal = 10;  
+    
+    for (int i = 0; i < ITEM; i++) {
+        gotoxy(Xawal, Yawal + i);  // setiap item turun 1 baris
+        printf("%d. %s (Stok: %d)", i + 1, shop[i].item, shop[i].stock);
+    }
+}
+
 void tambahkanItemKeInventoryKarakter(addressChar* karakter, addressShopItem shop, int jumlahDibeli){
-	addressItem newItem;
+    addressItem newItem;
     buatItem(&newItem);
     Isi_item(&newItem, shop.item, jumlahDibeli, shop.Type, shop.effect);
     tambahItem(&((*karakter)->inventory), newItem);
 }
 
+// Fungsi untuk menampilkan gold karakter
+void tampilkanGold(addressChar* karakter, int x, int y) {
+    gotoxy(x, y);
+    printf("Gold Anda: %d", (*karakter)->Gold);
+}
+
+// Fungsi untuk menghitung total harga
+int hitungTotalHarga(addressShopItem shop, int jumlah) {
+    return shop.price * jumlah;
+}
+
+// Fungsi untuk memproses pembayaran
+int prosesPembayaran(addressChar* karakter, int totalHarga) {
+    if ((*karakter)->Gold >= totalHarga) {
+        (*karakter)->Gold -= totalHarga;
+        return 1; // Pembayaran berhasil
+    }
+    return 0; // Gold tidak cukup
+}
+
 int inputUser(){
     int pilihan;
-    printf("Masukkan nomor item yang ingin dibeli: ");
+    gotoxy(113, 20); // Posisi input di area yang kosong
+    printf("Pilih nomor item (1-%d): ", ITEM);
     scanf("%d", &pilihan);
     return pilihan;
 }
 
 int inputJumlahItem(){
     int jumlahDibeli;
-    printf("Masukkan jumlah item yang ingin dibeli: ");
+    gotoxy(113, 21); // Posisi input di bawah pilihan item
+    printf("Masukkan jumlah: ");
     scanf("%d", &jumlahDibeli);
     return jumlahDibeli;
 }
 
 void pembelianItemShop(addressChar* karakter, addressShopItem shop[]) {
-    tampilkanItem(shop);
     int pilihan = inputUser();
-	
+    
     if(pilihan < 1 || pilihan > ITEM){
-    	printf("Pilihan tidak valid.\n");
+        gotoxy(113, 22);
+        printf("Pilihan tidak valid!        ");
+        Sleep(2000);
         return;
-	}
-	
-	if (shop[pilihan - 1].stock == 0) {
-	    printf("Stok item habis!\n");
-	    return;
-	}
-	
-	int jumlahDibeli = inputJumlahItem();
-	if(jumlahDibeli < 1 || jumlahDibeli > shop[pilihan - 1].stock){
-		printf("Jumlah tidak valid (tersedia: %d).\n", shop[pilihan - 1].stock);
+    }
+    
+    if (shop[pilihan - 1].stock == 0) {
+        gotoxy(113, 22);
+        printf("Stok item habis!           ");
+        Sleep(2000);
         return;
-	}
-
-	printf("Kamu membeli %s!\n", shop[pilihan - 1].item);
-            
+    }
+    
+    int jumlahDibeli = inputJumlahItem();
+    if(jumlahDibeli < 1 || jumlahDibeli > shop[pilihan - 1].stock){
+        gotoxy(113, 22);
+        printf("Jumlah tidak valid! (Max: %d)", shop[pilihan - 1].stock);
+        Sleep(2000);
+        return;
+    }
+    
+    // Hitung total harga
+    int totalHarga = hitungTotalHarga(shop[pilihan - 1], jumlahDibeli);
+    
+    // Tampilkan total harga
+    gotoxy(113, 22);
+    printf("Total Harga: %d Gold       ", totalHarga);
+    Sleep(1000);
+    
+    // Konfirmasi pembayaran
+    gotoxy(113, 23);
+    printf("Lanjutkan? (Y/N): ");
+    char konfirmasi;
+    scanf(" %c", &konfirmasi);
+    
+    if(konfirmasi != 'Y' && konfirmasi != 'y') {
+        gotoxy(113, 24);
+        printf("Pembelian dibatalkan.      ");
+        Sleep(2000);
+        return;
+    }
+    
+    // Proses pembayaran
+    if(!prosesPembayaran(karakter, totalHarga)) {
+        gotoxy(113, 24);
+        printf("Gold tidak cukup! Butuh %d Gold", totalHarga);
+        Sleep(2000);
+        return;
+    }
+    
+    // Berhasil membeli
+    gotoxy(113, 24);
+    printf("Berhasil"); 
+    gotoxy(113, 25);
+    printf("membeli %dx %s!", jumlahDibeli, shop[pilihan - 1].item);
+    
     shop[pilihan - 1].stock -= jumlahDibeli;
-            
     tambahkanItemKeInventoryKarakter(karakter, shop[pilihan - 1], jumlahDibeli);
-
+    
+    Sleep(2000);
 }
-
-
