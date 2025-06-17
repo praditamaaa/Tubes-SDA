@@ -2,12 +2,19 @@
 #define inventory_h
 #include "common.h"
 
+#define MAX_INVENTORY 20
+
+typedef struct {
+    tItem items[MAX_INVENTORY];
+    int count;
+} Inventory;
+
 void buatItem(addressItem *i);
-void Isi_item(addressItem *i, char item[], int bag, ItemType type, Effect effect);
-void tambahItem(addressItem* i, addressItem iNew);
-void tampilkanInventory(addressItem head);
+void Isi_item(tItem *item, char nama[], int bag, ItemType type, Effect effect);
+void tambahItem(Inventory* inv, tItem item);
+void tampilkanInventory(Inventory *inv); 
 int isNumber(const char *str);
-void pilihItem(addressItem *head);
-void hapusItem(addressItem* head, addressItem curr);
+void pilihItem(Inventory *inv);
+void hapusItem(Inventory *inv, int index);
 
 #endif
