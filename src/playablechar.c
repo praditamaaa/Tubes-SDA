@@ -95,7 +95,6 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
     if (*k != NULL) {
         strncpy((*k)->nama, nama, sizeof((*k)->nama) - 1);
         (*k)->nama[sizeof((*k)->nama) - 1] = '\0';
-        
         (*k)->Hp = *Hp;
         (*k)->Exp = 0;
         (*k)->Gold = 100;
@@ -205,11 +204,11 @@ void simpanSkill(addressChar k, SkillTree *node) {
     target->power = node->node->data.skill->power;
     target->scale = node->node->data.skill->scale;
 
-    k->skillCount++; 
+    k->skillCount++;  // Tambahkan jumlah skill
 }
 
 //=========================INVENTORY=============================
-void tambahItemKeKarakter(addressChar karakter, addressItem* I){
+void tambahItemKeKarakter(addressChar karakter, tItem* I){
     if (karakter->inventory.count >= MAX_INVENTORY) {
         printf("Inventory karakter penuh!\n");
         return;
@@ -218,9 +217,41 @@ void tambahItemKeKarakter(addressChar karakter, addressItem* I){
 }
 
 void tampilkanInventoryKarakter(addressChar karakter) {
-    tampilkanInventory(&(karakter->inventory));
+    // Koordinat awal untuk tampilkan di kanan layar
+    int startX = 92;  
+    int startY = 9;
+    int maxY = 28; 
+	   
+    // Bersihkan area inventory dulu
+    for (int y = startY; y < maxY; y++) {
+        gotoxy(startX, y);
+        printf("                          "); 
+    }
+
+    tampilkanInventory(&(karakter->inventory), startX, startY);
 }
 
 void pilihItemKarakter(addressChar karakter) {
-    pilihItem(&(karakter->inventory));
+    tItem *dipilih = pilihItem(&(karakter->inventory));
+    if (dipilih == NULL) return;
+
+    printf("Menggunakan item: %s\n", dipilih->item);
+
+    if (dipilih->Type == HealPotion) {
+        karakter->Hp += dipilih->effect.heal.amount;
+        printf("HP bertambah %d\n", dipilih->effect.heal.amount);
+    } else if (dipilih->Type == BurnPotion || dipilih->Type == FreezePotion) {
+        printf("Item ini hanya bisa digunakan saat bertarung dengan musuh.\n");
+        Sleep(1500);
+        return;
+    }
+
+    dipilih->bag--;
+    if (dipilih->bag == 0) {
+        // Hapus dari inventory jika habis
+        int index = dipilih - karakter->inventory.items;
+        hapusItem(&(karakter->inventory), index);
+    }
+
+    Sleep(1500);
 }
