@@ -325,11 +325,12 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
     }
 }
 
-void drawShopUI(addressChar *k, addressShopItem shop[]){
+void drawShopUI(addressChar *k, addressShopItem shop){
     // border atas dan bawah
     int lastWidth = 0, lastHeight = 0;
     int termWidth, termHeight;
     int shopMode = 0; // 0 = display mode, 1 = buying mode
+    int selectedIndex = 0;
     
     while(1){
         getTerminalSize(&termWidth, &termHeight);
@@ -383,24 +384,28 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
             //RENDER GAMBAR
             drawShopAt(marginX + 7 + (smallBoxWidth + 1) * 3, smallBoxY - 26);
             
-            //POTION 1
-            drawpotionAt(marginX + 10, 7);  
-            gotoxy(marginX + 11, 25);
-            printf("%s (%d Gold)", shop[0].item, shop[0].price);
-            gotoxy(marginX + 20, 26);
-            printf("Stok: %d", shop[0].stock);
-            //POTION 2
-            drawpotionAt(marginX + 40, 7);
-            gotoxy(marginX + 43, 25);
-            printf("%s (%d Gold)", shop[1].item, shop[1].price);
-            gotoxy(marginX + 50, 26);
-            printf("Stok: %d", shop[1].stock);
-            //POTION 3
-            drawpotionAt(marginX + 70, 7);
-            gotoxy(marginX + 73, 25);
-            printf("%s (%d Gold)", shop[2].item, shop[2].price);
-            gotoxy(marginX + 80, 26);
-            printf("Stok: %d", shop[2].stock);
+            int xPotion[3] = {marginX + 10, marginX + 40, marginX + 70};
+            int yPotion = 7;
+            addressShopItem temp = shop;
+            
+            for (int i = 0; i < 3; i++) {
+			    // 1. gambar tetap putih
+			    setColor(7);
+			    drawpotionAt(xPotion[i], yPotion);
+			
+			    // 2. lalu beri warna teks sesuai highlight
+			    if (i == selectedIndex) setColor(14); // kuning
+			    else setColor(7); // putih
+			
+			    gotoxy(xPotion[i] + 1, 25);
+			    printf("%s (%d Gold)", temp->item, temp->price);
+			
+			    gotoxy(xPotion[i] + 10, 26);
+			    printf("Stok: %d", temp->stock);
+			
+			    temp = temp->next;
+			}
+			setColor(7); // reset warna
             
 			//====== RIGHT BAR TEXT =======       
             gotoxy(marginX + 13 + (smallBoxWidth + 1) * 3, smallBoxY - 20);
@@ -412,6 +417,8 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
             // Tambahkan instruksi kontrol
             gotoxy(marginX + 4, smallBoxY + 2);
             printf("Tekan 'B' untuk membeli");
+            gotoxy(marginX + 4, smallBoxY + 3);
+            printf("Atau gunakan < dan >");
             gotoxy(marginX + 4, smallBoxY + 3);
             printf("Tekan 'Q' untuk keluar");
             
@@ -427,22 +434,38 @@ void drawShopUI(addressChar *k, addressShopItem shop[]){
             clearInputArea();
             
             switch(input) {
+            	case 75: 
+        			if (selectedIndex > 0) selectedIndex--;
+			        shopMode = 0; 
+			        break;
+			
+			    case 77: 
+			        if (selectedIndex < 2) selectedIndex++; 
+			        shopMode = 0;
+			        break;
+            	case 13:
+				    {
+				        addressShopItem selected = shop;
+				        for (int i = 0; i < selectedIndex; i++) selected = selected->next;
+				        pembelianItemShop(k, selected); 
+				        clearInputArea();
+    					shopMode = 0;
+				    }
+				    break;
                 case 'b':
                 case 'B':
                     pembelianItemShop(k, shop);
                     clearInputArea();
-                    shopMode = 0; // Trigger redraw untuk update stock
-                    break;
-                    
+                    shopMode = 0; 
+                    break;                  
                 case 'q':
                 case 'Q':
                 	clearScreen();
-                    return; // Keluar dari shop
-                    
+                    return;                
                 default:
-                    gotoxy(113, 22);
-                    printf("Tekan 'B' untuk beli, 'Q' keluar");
-                    Sleep(1000);
+                	gotoxy(113, 22);
+        			printf("refreshing...");
+                    Sleep(100);
                     clearInputArea();
                     break;
             }
