@@ -103,7 +103,7 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
         (*k)->Def = *Def;
         (*k)->Lvl = *Lvl;
         (*k)->isDefending = DEFAULT;
-        (*k)->inventory = NULL;
+        (*k)->inventory.count = 0;
         (*k)->charType = charType;
         
         (*k)->skilltree = initSkillTree(charType);
@@ -205,22 +205,22 @@ void simpanSkill(addressChar k, SkillTree *node) {
     target->power = node->node->data.skill->power;
     target->scale = node->node->data.skill->scale;
 
-    k->skillCount++;  
+    k->skillCount++;  // Tambahkan jumlah skill
 }
 
 //=========================INVENTORY=============================
-void tambahItemKeKarakter(addressChar* karakter, addressItem* I){
-	addressItem baru;
-    buatItem(&baru);
-    Isi_item(&baru, (*I)->item, (*I)->bag, (*I)->Type, (*I)->effect);
-    tambahItem(&((*karakter)->inventory), baru);
+void tambahItemKeKarakter(addressChar karakter, addressItem* I){
+    if (karakter->inventory.count >= MAX_INVENTORY) {
+        printf("Inventory karakter penuh!\n");
+        return;
+    }
+    tambahItem(&(karakter->inventory), *I);
 }
 
 void tampilkanInventoryKarakter(addressChar karakter) {
-    tampilkanInventory(karakter->inventory);
+    tampilkanInventory(&(karakter->inventory));
 }
 
 void pilihItemKarakter(addressChar karakter) {
-    pilihItem(&karakter->inventory); 
+    pilihItem(&(karakter->inventory));
 }
-
