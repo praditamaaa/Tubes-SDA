@@ -8,6 +8,22 @@ void Isi_item(tItem *item, char nama[], int bag, ItemType type, Effect effect) {
 }
 
 void tambahItem(Inventory* inv, tItem item) {
+    int i = 0;
+
+    // Cek apakah item sudah ada
+    while (i < inv->count) {
+        if (strcmp(inv->items[i].item, item.item) == 0 &&
+            inv->items[i].Type == item.Type &&
+            memcmp(&inv->items[i].effect, &item.effect, sizeof(Effect)) == 0) {
+            
+            // Jika item sama, tambahkan jumlah
+            inv->items[i].bag += item.bag;
+            return;
+        }
+        i++;
+    }
+
+    // Jika belum ada, tambahkan baru
     if (inv->count < MAX_INVENTORY) {
         inv->items[inv->count++] = item;
     } else {
@@ -15,18 +31,17 @@ void tambahItem(Inventory* inv, tItem item) {
     }
 }
 
-
-void tampilkanInventory(Inventory *inv) {
+void tampilkanInventory(Inventory *inv, int x, int y) {
     if (inv->count == 0) {
-        printf("Inventory Masih Kosong.\n");
+        gotoxy(x, y);
+        printf("Inventory Masih Kosong.");
     } else {
-        printf("Daftar Item dalam Inventory\n");
         for (int i = 0; i < inv->count; i++) {
-            printf("%d. %s (tersisa %d)\n", i + 1, inv->items[i].item, inv->items[i].bag);
+            gotoxy(x, y + i);
+            printf("%d. %s (%d)", i + 1, inv->items[i].item, inv->items[i].bag);
         }
     }
 }
-
 
 int isNumber(const char *str) {
 	int i = 0;
@@ -37,10 +52,8 @@ int isNumber(const char *str) {
     return 1;
 }
 
-void pilihItem(Inventory *inv) {
-    tampilkanInventory(inv);
-    if (inv->count == 0) return;
-
+tItem* pilihItem(Inventory *inv) {
+    if (inv->count == 0) return NULL;
     printf("\nPilih item yang ingin digunakan\n");
     printf("Ketik nama atau nomor item: ");
 
@@ -66,15 +79,11 @@ void pilihItem(Inventory *inv) {
 
     if (index == -1) {
         printf("Item tidak ditemukan.\n");
-        return;
+        Sleep(1500);
+        return NULL;
     }
 
-    printf("Menggunakan item: %s\n", inv->items[index].item);
-    inv->items[index].bag--;
-
-    if (inv->items[index].bag == 0) {
-        hapusItem(inv, index);
-    }
+    return &inv->items[index]; 
 }
 
 void hapusItem(Inventory *inv, int index) {
