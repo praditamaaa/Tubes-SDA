@@ -25,7 +25,7 @@ typedef struct tChar{
     int Def;
     int Lvl;
     int isDefending;
-    addressItem inventory;
+    Inventory inventory;
     SkillTree* skilltree;       
     CharType charType;
 	SkillList* skills[MAX_SKILL];
@@ -47,7 +47,7 @@ void efekSkill(addressChar k);
 void simpanSkill(addressChar k, SkillTree *node);
 
 // Inventory
-void tambahItemKeKarakter(addressChar* karakter, addressItem* I);
+void tambahItemKeKarakter(addressChar karakter, addressItem* I);
 void tampilkanInventoryKarakter(addressChar karakter);
 void pilihItemKarakter(addressChar karakter);
 
