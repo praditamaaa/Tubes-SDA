@@ -119,7 +119,8 @@ void pembelianItemShop(addressChar* karakter, addressShopItem itemDipilih) {
         Sleep(2000);
         return;
     }
-
+    gotoxy(113, 21);
+    printf("%s", itemDipilih->item);
     int jumlahDibeli = inputJumlahItem();
     if (jumlahDibeli < 1 || jumlahDibeli > itemDipilih->stock) {
         gotoxy(113, 22);
