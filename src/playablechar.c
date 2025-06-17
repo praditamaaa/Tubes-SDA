@@ -205,7 +205,7 @@ void simpanSkill(addressChar k, SkillTree *node) {
     target->power = node->node->data.skill->power;
     target->scale = node->node->data.skill->scale;
 
-    k->skillCount++;  // Tambahkan jumlah skill
+    k->skillCount++; 
 }
 
 //=========================INVENTORY=============================
