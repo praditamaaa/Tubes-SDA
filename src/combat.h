@@ -1,46 +1,36 @@
 #ifndef COMBAT_H
 #define COMBAT_H
 
-#include "user.h"
+#include "playablechar.h"
 #include "enemy.h"
+#include "common.h"
+#include "display.h"
 
-typedef enum{
-	STATUS_BURN,
-	STATUS_FREEZE
-}StatusType;
-
-typedef struct{
-	StatusType effect;
-	int damage;
-	int duration;
-}StatusEffect;
-
-typedef struct{
-	StatusType effect;
-	struct EffectNode* next;
-}EffectNode;
+typedef struct EffectNode {
+    StatusEffect effect;
+    struct EffectNode* next;
+} EffectNode;
 
 typedef struct{
 	EffectNode *first;
 	EffectNode *last;
 }EffectQueue;
 
+
 /* MODUL YANG BERPERAN UNTUK MEKANISME PERTARUNGAN */
 /* Kalkulasi stats akan dimasukkan sekalian di dalam setiap modul terkait */
-void doAttack(User *user, Enemy *enemy);
-void doDefense(User *user, Enemy *enemy);
-void useSkill(User *user, Enemy *enemy);
-void useItem(User *user, Enemy *enemy);
-void doEscape(User *player);
+void doPlayerAttack(addressChar player, Enemy *enemy);
+void doPlayerDefense(addressChar player);
+void usePlayerSkill(addressChar player, Enemy *enemy);
+void pakeItem(addressChar karakter, Enemy *enemy, EffectQueue *queue);
+bool doPlayerEscape();
 
-void enemyAttack(Enemy *enemy, User *user);
-void enemyDefense(Enemy *enemy, User *user);
-void enemySkill(Enemy *enemy, User *user);
-
-
+void EnemyAttack(Enemy *enemy, addressChar player);
+void EnemyDefense(Enemy *enemy);
+void EnemySkill(Enemy *enemy, addressChar player);
 
 /* MODUL YANG BERPERAN UNTUK MEKANISME STATUS EFEK */
-void enqueue(EffectQueue *List, StatusType type)
-void updateEffect(EffectQueue *List, int *targetHP)
+void enqueue(EffectQueue *List, StatusEffect effect);
+void updateEffect(EffectQueue *List, int *targetHP);
 
 #endif
