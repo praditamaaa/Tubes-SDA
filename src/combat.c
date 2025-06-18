@@ -1,135 +1,205 @@
-#include "combat.h"
+#include "combat.h" 
 
-const StatusEffect STATUS_EFFECT[STATUS_COUNT] = {
-	{STATUS_BURN, 15, 3},
-	{STATUS_FREEZE, 0, 3}
-};
+void doPlayerAttack(addressChar player, Enemy *enemy) {
+    int damage;
 
-/* AKSI PEMAIN */
-void doAttack(User *user, Enemy *enemy){
-	int damageDealt, Attack, Defense;
-	Attack = user->playablechar->Att;
-	Defense = getEnemyDef(enemy);
-	
-	if(enemy->isDefending == 1){
-		damageDealt = Attack - Defense;
-		damageDealt = damageDealt / 2;
-		if(damageDealt < 1){
-			damageDealt = 1;
-		}
-		
-		enemy->isDefending = 0;
-	}else{
-		damageDealt = Attack - Defense;
-		if(damageDealt < 1){
-			damageDealt = 1;
-		}
-	}
-	
-	enemy->Hp -= damageDealt
-	
-	// Tampilkan LOG bahwa Playablehar melakukan DAMAGE kepada Enemy
+    if (enemy->isDefending) {
+        damage = player->Att - enemy->Def; 
+        enemy->isDefending = 0;            
+    } else {
+        damage = player->Att - (enemy->Def / 2); 
+    }
+
+    if (damage < 1) damage = 1;
+
+    enemy->Hp -= damage;
+    if (enemy->Hp < 0) enemy->Hp = 0;
+
+    printf(" KAmu mmeneyrang dengan %d damage!\n", damage);
 }
 
-void doDefense(User *user, Enemey *enemy){
-	user->playablechar->isDefending = 1;
-	printf("ANDA memilih Bertahan! Damage yang diterima akan Berkurang!");
+void doPlayerDefense(addressChar player) {
+    player->isDefending = 1;
+    printf("kamu bertahan! \n");
 }
 
-void useSkill(User *user, Enemy *enemy){
-	// Variabel yang menyimpan SKILL ????
+void usePlayerSkill(addressChar player, Enemy *enemy) {
+	if (player->skillCount == 0) {
+        printf("Kamu belum memiliki skill!\n");
+        return;
+    }
+
+    printf("Pilih Skill:\n");
+    for (int i = 0; i < player->skillCount; i++) {
+        printf("%d. %s (Power: %d, Scale: %.2f)\n", i + 1, 
+               player->skills[i].skillName);
+    }
+
+    int pilihan;
+    printf("Pilihan: ");
+    scanf("%d", &pilihan);
+    getchar();
+
+    if (pilihan < 1 || pilihan > player->skillCount) {
+        printf("Pilihan tidak valid!\n");
+        return;
+    }
+
+    SkillList *skill = &player->skills[pilihan - 1];
+
+    int damage = (int)(skill->power * skill->scale) - (enemy->Def / 2);
+    if (damage < 1) damage = 1;
+
+    player->Hp -= damage;
+    if (player->Hp < 0) player->Hp = 0;
+
+    printf("Kamu menggunakan skill %s memberikan %d damage!\n", 
+           skill->skillName, damage);
 }
 
-void useItem(User *user, Enemy *enemy, ){
-	// M
+void pakeItem(addressChar karakter, Enemy *enemy, EffectQueue *queue) {
+    tItem *dipilih = pilihItem(&(karakter->inventory));
+    if (dipilih == NULL) return;
+
+    gotoxy(30, HEIGHT + 10);
+    printf("Menggunakan item: %s\n", dipilih->item);
+
+    switch (dipilih->Type) {
+        case HealPotion:
+            karakter->Hp += dipilih->effect.heal.amount;
+            gotoxy(30, HEIGHT + 11);
+            printf("HP bertambah %d\n", dipilih->effect.heal.amount);
+            break;
+
+        case BurnPotion:
+        case FreezePotion:
+            enqueue(queue, dipilih->effect.status);
+            gotoxy(30, HEIGHT + 11);
+            printf("Efek %s dimasukkan ke queue!\n",
+                   dipilih->Type == BurnPotion ? "Burn" : "Freeze");
+            break; 
+    }
+
+    dipilih->bag--;
+    if (dipilih->bag == 0) {
+        int index = dipilih - karakter->inventory.items;
+        hapusItem(&(karakter->inventory), index);
+    }
+
+    Sleep(1500);
 }
 
-void doEscape(User *player){
-	printf("ANDA memilih untuk Kabur!\n");
+
+bool doPlayerEscape() {
+    int escapeChance = 50;
+    int roll = rand() % 100;
+    
+    if (roll < escapeChance) {
+        printf("berhasil kabur\n");
+        return true;
+    } else {
+        printf("gagal kabur!\n");
+        return false;
+    }
 }
 
-/* AKSI MUSUH */
-void enemyAttack(Enemy *enemy, User *user){
-	int Attack = getEnemyAtt(enemy);
-	int Defense = user->playablechar->Def;
-	int damageDealt;
-	
-	// BAGAIMANA JIKA PLAYER MELAKUKAN doDefense ???
-	if(user->playablechar->isDefending == 1){
-		damageDealt = Attack - Defense;
-		damageDealt = damageDealt / 2;
-		if(damageDealt < 1){
-			damageDealt = 1;
-		}
-		
-		user->playablechar->isDefending = 0;
-	}else{
-		damageDealt = Attack - Defense;
-		if(damageDealt < 1){
-			damageDealt = 1;
-		}
-	}
-	
-	user->playablechar->Hp -= damage;
-	
-	// Masukkan ke dalam Stack Gerakan
-	
-	// Tampilkan LOG bahwa Enemy melakukan DAMAGE kepada Playablechar
+void EnemyAttack(Enemy *enemy, addressChar player) {
+    int damage;
+
+    if (player->isDefending) {
+        damage = enemy->Att - player->Def;
+        player->isDefending = 0;
+    } else {
+        damage = enemy->Att - (player->Def / 2);
+    }
+
+    if (damage < 1) damage = 1;
+
+    player->Hp -= damage;  
+    if (player->Hp < 0) player->Hp = 0;
+
+    printf("Musuh menyerang dengan %d damage!\n", damage);
 }
 
-void enemyDefense(Enemy *enemy, User *user){
-	enemy->isDefending = 1;
-	printf("Musuh memilih bertahan! Damage yang diterima akan Berkurang!\n");
+void EnemyDefense(Enemy *enemy) {
+    enemy->isDefending = 1;
+    printf("Musuh bertahan!\n");
 }
 
-void enemySkill(Enemy *enemy, User *user){
-	int move = rand() %3;
-	Skill chosen = enemy->skills[move];
-	switch (chosen.type){
-		case SKILL_ATTACK{
-			int damageDealt, damageSkill;
-			
-			damageSkill =(int)(chosen.power * chosen.scale);
-			
-			if(user->playablechar->isDefending == 1){
-				damageDealt = damageSkill - user->playablechar->Def;
-				damageDealt = damageDealt / 2;
-				if(damageDealt < 1){
-					damageDealt = 1;
-				}
-				user->playablechar->isDefending = 0;
-			}else{
-				damageDealt = damageSkill - user->playablechar->Def;
-				if(damageDealt < 1){
-					damageDealt = 1;
-				}
-			}
-			
-			user->playablechar->Hp -= damageDealt;
-			// Tampilkan LOG bahwa Enemy menggunakan SKILL dan melakukan Damage kepada Playablechar
-			break;
-		}
-		case SKILL_DEFENSE{
-			int buff;
-			
-			buff = (int)(chosen.power * chosen.scale);
-			enemy->DefBuff.value = buff;
-			enemy->DefBuff.duration = 1;
-			
-			// Tampilkan LOG bahwa Enemy menggunakan SKILL untuk meningkatkan DEF
-			break;
-		}
-		case SKILL_HEAL{
-			int heal;
-			
-			heal = (int)(chosen.power * chosen.scale);
-			enemy->Hp += heal
-			
-			// Tampilkan LOG bahwa Enemy menggunakan SKILL untuk memulihkan HP
-			break;
-		}
-	}
-	
+void EnemySkill(Enemy *enemy, addressChar player) {
+    int skillIndex = rand() % 3;
+    Skill *skill = &enemy->skills[skillIndex];
+    
+    printf("Musuh menggunakna %s!\n", skill->name);
+    
+    switch(skill->type) {
+        case SKILL_ATTACK: {
+            int damage = (int)(skill->power * skill->scale) - (player->Def / 2);
+            if (player->isDefending) {
+                damage = damage / 2;
+                player->isDefending = 0;
+            }
+            if (damage < 1) damage = 1;
+            
+            player->Hp -= damage;
+            printf("Musush menyerang dengan skill -%dhp\n", damage);
+            
+            if (player->Hp < 0) player->Hp = 0;
+            break;
+        }
+        case SKILL_DEFENSE:
+            enemy->isDefending = 1;
+            printf("Defend mussuh naik\n");
+            break;
+        case SKILL_HEAL: {
+            int heal = (int)(skill->power * skill->scale);
+            enemy->Hp += heal;
+            printf("musuh ngeheal +%dhp\n", heal);
+            break;
+        }
+    }
 }
 
-/* CONSOLE */
+void enqueue(EffectQueue *List, StatusEffect effect) {
+    EffectNode *newNode = malloc(sizeof(EffectNode));
+    newNode->effect = effect;
+    newNode->next = NULL;
+
+    if (List->last == NULL) {
+        List->first = List->last = newNode;
+    } else {
+        List->last->next = newNode;
+        List->last = newNode;
+    }
+
+    printf("[QUEUE] Efek %d (durasi: %d) ditambahkan.\n", effect.type, effect.duration);
+}
+
+void updateEffect(EffectQueue *List, int *targetHP) {
+    if (List->first == NULL) return;
+
+    StatusEffect *efek = &List->first->effect;
+
+    switch (efek->type) {
+        case STATUS_BURN:
+            printf("[EFFECT] Musuh terbakar! -%d HP\n", efek->damage);
+            *targetHP -= efek->damage;
+            if (*targetHP < 0) *targetHP = 0;
+            break;
+
+        case STATUS_FREEZE:
+            printf("[EFFECT] Musuh beku! Tidak bisa menyerang.\n");
+            
+            break;
+    }
+
+    efek->duration--;
+    
+    if (efek->duration <= 0) {
+        EffectNode *hapus = List->first;
+        List->first = List->first->next;
+        if (List->first == NULL) List->last = NULL;
+        free(hapus);
+        printf("[EFFECT] Efek selesai.\n");
+    }
+}
