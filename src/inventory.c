@@ -1,3 +1,15 @@
+/*
+.| Program : inventory.c
+.| Berisi logika atau isi modul dari data header shop.h
+.|
+.| Tujuan : Membuat item yang akan dijual di shop dan bisa 
+.|		dibeli oleh user yang kemudian disimpan 
+.|		di inventory untuk dapat digunakan di combat
+.|		di permainan.
+.| 
+.| Oleh : Afriza Choirie Saputra
+*/
+
 #include "inventory.h"
 
 void Isi_item(tItem *item, char nama[], int bag, ItemType type, Effect effect) {
