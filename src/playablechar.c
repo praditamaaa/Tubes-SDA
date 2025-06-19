@@ -1,5 +1,5 @@
 /*
-.| Program : skilltree.c
+.| Program : playablechar.c
 .| Berisi logika atau isi modul dari data header playablechar.h 
 .|
 .| Tujuan : Membuat karakter yang bisa digunakan oleh user 
