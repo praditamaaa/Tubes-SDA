@@ -1,15 +1,16 @@
 #include "gameLoop.h"
+<<<<<<< HEAD
 
+=======
+>>>>>>> 209bf9551ab314d8177a7953e0e74f605555fd9d
 void combatLoop(addressChar player, Enemy *enemy) {
     EffectQueue enemyEffectQueue = {NULL, NULL}; 
     
     while (player->Hp > 0 && enemy->Hp > 0) {
         updateEffect(&enemyEffectQueue, &enemy->Hp);
-
-        if (enemy->Hp <= 0) break;
         
         // GILIRAN PLAYER
-        int action = drawCombatUi(&player, enemy);
+        int action = drawCombatUi(player, enemy);
         switch (action) {
             case 1: doPlayerAttack(player, enemy); break;
             case 2: usePlayerSkill(player, enemy); break;
@@ -19,8 +20,6 @@ void combatLoop(addressChar player, Enemy *enemy) {
                 if (doPlayerEscape()) return;
                 break;
         }
-        
-        if (enemy->Hp <= 0) break;
 
         Sleep(500);
 
@@ -55,21 +54,13 @@ void combatLoop(addressChar player, Enemy *enemy) {
             
         } else if (enemy->Hp <= 0) {
             clearScreen();
-            
             int exp = 50 + (enemy->Lv * 5);
             int gold = 40 + (enemy->Lv * 5);
             player->Exp += exp;
             player->Gold += gold;
-            
-            gotoxy(65, 16);
-            printf("VICTORY\n");
-            
-            gotoxy(60, 17);
-            printf("Kamu mendapatkan %d EXP dan %d Gold!\n", exp, gold);
-        
-            gotoxy(60, 18);
-            printf("Total EXP: %d | Level: %d\n", player->Exp, player->Lvl);
-            
+		    printf("VICTORY\n");
+		    printf("Kamu mendapatkan %d EXP dan %d Gold!\n", exp, gold);
+		    printf("Total EXP: %d | Level: %d\n", player->Exp, player->Lvl);
             levelUp(player);
             
             Sleep(2000);
@@ -78,19 +69,19 @@ void combatLoop(addressChar player, Enemy *enemy) {
     }
 }
 
-void handleInput(Map *map, addressChar *k, addressShopItem shop[], addressUser loggedUser, char key, int *running) {
+void handleInput(Map *map, addressChar *k, addressShopItem shop[], char key, int *running) {
     switch (key) {
         case 'w': case 'W': case 72: 
-            movePlayer(map, UP, k, shop, loggedUser);
+            movePlayer(map, UP, k, shop);
             break;
         case 's': case 'S': case 80:
-            movePlayer(map, DOWN, k, shop, loggedUser);
+            movePlayer(map, DOWN, k, shop);
             break;
         case 'a': case 'A': case 75: 
-            movePlayer(map, LEFT, k, shop, loggedUser);
+            movePlayer(map, LEFT, k, shop);
             break;
         case 'd': case 'D': case 77: 
-            movePlayer(map, RIGHT, k, shop, loggedUser);
+            movePlayer(map, RIGHT, k, shop);
             break;
         case 'z': case 'Z':
             clearScreen();
@@ -116,6 +107,8 @@ void handleInput(Map *map, addressChar *k, addressShopItem shop[], addressUser l
             pauseGame();
             break;
         case 'q': case 'Q':  // Quit game
+        	free(k);
+        	free(map); 
             exitGame(running);
             break;
     }
@@ -165,13 +158,9 @@ void gameLoop() {
     int running = 1;
     char key;
 
-	//make database file direction
-	mkdir("database");
-	
     // Inisialisasi semua komponen
     srand(time(NULL));
     Map gameMap;
-    addressUser user = NULL;
     addressChar player = NULL;
     addressShopItem shop = NULL;
 
@@ -181,7 +170,10 @@ void gameLoop() {
     initMap(&gameMap);
 
     // Welcome screen dan pemilihan karakter
-    welcomeScreen(&user); 
+    welcomeScreen(); 
+
+    int pilihan = inputCharUser();
+    pilihKarakter(&player, pilihan);
 
     // Setup awal tampilan
     clearScreen();
@@ -196,7 +188,7 @@ void gameLoop() {
 
             if (!isValidInput(key)) continue;
 
-            handleInput(&gameMap, &player, &shop, user, key, &running);
+            handleInput(&gameMap, &player, &shop, key, &running);
 
             if (needsRedraw(key)) {
                 drawBorder();

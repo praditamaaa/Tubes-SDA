@@ -79,5 +79,5 @@ void movePlayer(Map *map, Direction dir, addressChar* k, addressShopItem shop[],
 }
 
 bool checkEncounter() {
-    return (rand() % 100) < 5; 
+    return (rand() % 100) < 25; 
 }
