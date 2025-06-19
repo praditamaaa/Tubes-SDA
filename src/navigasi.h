@@ -1,6 +1,7 @@
 #ifndef NAVIGASI_H
 #define NAVIGASI_H
 
+#include "display.h"
 #include "User.h"
 #include "common.h"
 #include "map.h"

@@ -1,5 +1,4 @@
 #include "gameLoop.h"
-#include "display.h"
 
 void combatLoop(addressChar player, Enemy *enemy) {
     EffectQueue enemyEffectQueue = {NULL, NULL}; 

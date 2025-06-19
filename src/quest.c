@@ -13,6 +13,50 @@ addressQuest createQuest(int id, QuestType type, const char* desc, int target) {
     newQuest->completed = false;
     newQuest->next = NULL;
     newQuest->prev = NULL;
+    
+    // Tiap quest di random rewardnya dgn range tertentu
+    switch (type) {
+        case QUEST_REACH_LEVEL:
+            newQuest->rewardExp = rand() % 51 + 50;     
+            newQuest->rewardGold = rand() % 51 + 50;    
+            break;
+        case QUEST_KILL_ENEMY_TOTAL:
+            newQuest->rewardExp = rand() % 101 + 100;   
+            newQuest->rewardGold = rand() % 101 + 100;  
+            break;
+        case QUEST_KILL_ENEMY_TYPE:
+            newQuest->rewardExp = rand() % 51 + 75;
+            newQuest->rewardGold = rand() % 51 + 75;
+            break;
+        case QUEST_COLLECT_SCORE:
+            newQuest->rewardGold = rand() % 51 + 100;
+            break;
+        case QUEST_ESCAPE_BATTLE:
+            newQuest->rewardGold = rand() % 21 + 30;
+            break;
+        case QUEST_REACH_ATTACK:
+            newQuest->rewardAtt = 1;
+            newQuest->rewardGold = rand() % 21 + 50;
+            break;
+        case QUEST_REACH_DEF:
+            newQuest->rewardDef = 1;
+            newQuest->rewardGold = rand() % 21 + 50;
+            break;
+        case QUEST_REACH_HP:
+            newQuest->rewardExp = rand() % 41 + 60;
+            break;
+        case QUEST_REACH_GOLD:
+            newQuest->rewardExp = rand() % 41 + 60;
+            break;
+        case QUEST_TOTAL_QUEST_COMPLETED:
+            newQuest->rewardGold = 100;
+            newQuest->rewardExp = 100;
+            break;
+        default:
+            newQuest->rewardGold = 10;
+            break;
+    }
+    
     return newQuest;
 }
 
@@ -110,6 +154,7 @@ void assignRandomQuest(addressUser user) {
     addressQuest newQuest = createQuest(randomIdx, types[randomIdx], descriptions[randomIdx], targets[randomIdx]);
     addQuest(&user->questList, newQuest);
     printf("New quest accepted: %s\n", descriptions[randomIdx]);
+	printf("Reward: +%d Gold, +%d Exp, +%d Att, +%d Def\n", newQuest->rewardGold, newQuest->rewardExp, newQuest->rewardAtt, newQuest->rewardDef);
 }
 
 void updateQuests(addressQuest head, addressChar k, runTimeStats* stats) {
@@ -161,5 +206,47 @@ void updateQuests(addressQuest head, addressChar k, runTimeStats* stats) {
         }
         head = head->next;
     }
+}
+
+void giveQuestReward(addressChar k, RunTimeStats* stats, addressQuest q) {
+    if (!q || !k || !stats) return;
+
+    if (q->completed) {
+        k->Gold += q->rewardGold;
+        k->Exp += q->rewardExp;
+        k->Att += q->rewardAtt;
+        k->Def += q->rewardDef;
+
+        printf("\n--- QUEST REWARD ---\n");
+        if (q->rewardGold) printf("+%d Gold\n", q->rewardGold);
+        if (q->rewardExp)  printf("+%d Exp\n", q->rewardExp);
+        if (q->rewardAtt)  printf("+%d Attack\n", q->rewardAtt);
+        if (q->rewardDef)  printf("+%d Defense\n", q->rewardDef);
+        printf("--------------------\n");
+
+        // quest dihapus Setelah reward diberikan
+        removeQuest(&stats->user->questList, q->id);
+    }
+}
+
+void claimQuestReward(addressUser user, int questId) {
+    addressQuest q = user->questList;
+    while (q && q->id != questId) {
+        q = q->next;
+    }
+
+    if (!q) {
+        printf("Quest not found.\n");
+        return;
+    }
+
+    if (!q->completed) {
+        printf("Quest not done.\n");
+        return;
+    }
+
+    giveQuestReward(&user->character, q);
+    removeQuest(&user->questList, q->id);
+    user->stats.totalQuestCompleted++;
 }
 

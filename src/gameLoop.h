@@ -3,6 +3,7 @@
 #include "playablechar.h"
 #include "combat.h"
 #include "common.h"
+#include "display.h"
 
 void combatLoop(addressChar player, Enemy *enemy);
 void gameLoop();

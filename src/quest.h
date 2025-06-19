@@ -35,6 +35,10 @@ typedef struct Quest {
     int target;
     int progress;
     bool completed;
+    int rewardGold;
+	int rewardExp;
+	int rewardAtt;
+	int rewardDef;
     struct Quest* next;
     struct Quest* prev;
 } Tquest;
@@ -46,5 +50,7 @@ void addQuest(addressQuest* head, addressQuest newQuest);
 void removeQuest(addressQuest* head, int id);
 void showAllQuests(addressQuest head);
 void updateQuests(addressQuest head, addressChar k, runTimeStats* stats);
+void giveQuestReward(addressChar k, addressQuest quest);
+void claimQuestReward(addressUser user, int questId);
 
 #endif
