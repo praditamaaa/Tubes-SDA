@@ -1,5 +1,96 @@
 #include "display.h"
 
+void tampilkanASCII() {
+    printCenteredAtRow("                                                                                                    ",1);
+    printCenteredAtRow("                                                                                                    ",2);
+    printCenteredAtRow("                                                                                                    ",3);
+    printCenteredAtRow(":::::      :::::  ::::::  :::: :::::::::::: :::::   ::::::   :::::::::    :::::::::        :::::    ",4);
+    printCenteredAtRow(" :::::    ::::::    ::::  ::   ::  ::::  ::  :::     ::::  ::::     ::::   :::  ::::      ::::::    ",5);
+    printCenteredAtRow(" :;::::  ;:;:::;     ::::::        ::::      :::     ;:::  ::::     ;::;;  :::  ::::     ;:: ::::   ",6);
+    printCenteredAtRow(" ;; ;;;;;;;:;;;;       ;;;         ;;;;      ;;;;::;;;;;; ;;;;;      ;;;;  ;;;;;;;       ;;  ;;;;;  ",7);
+    printCenteredAtRow(" ;;  ;;;;; ;;;;;       ;;;         ;;;;      ;;;     ;;;;  ;;;;      ;;;   ;;; ;;;;;    ;;;   ;;;;  ",8);
+    printCenteredAtRow(" ;;  ;;;;  ;;;;;      ;;;;         ;;;;      ;;;;    ;;;;   ;;;;;  ;;;;   ;;;;; ;;;;;  ;;;     ;;;; ",9);
+    printCenteredAtRow(";;;;   ;   ;;;;;     ;;;;;;       ;;;;;;    ;;;;;   ;;;;;;     ;;;;;      ;;;;;   ;;;;;;;;;   ;;;;;;",10);
+    printCenteredAtRow("                                                                                                    ",11);
+    printCenteredAtRow("                                                                                                    ",12);
+    printCenteredAtRow("                                                                                                    ",13);
+}
+
+void welcomeScreen() {
+	const char* loadingFrames[] = {
+        "Tekan Enter untuk Memulai   ",
+        "Tekan Enter untuk Memulai.  ",
+        "Tekan Enter untuk Memulai.. ",
+        "Tekan Enter untuk Memulai...",
+    };
+    int frame = 0;
+
+    // Tentukan baris tempat teks akan ditampilkan (di bawah ASCII art)
+    int row = 16; 
+
+    int numFrames = sizeof(loadingFrames) / sizeof(loadingFrames[0]); // frame = 3
+
+    while (1) {
+        char fullText[100];
+        snprintf(fullText, sizeof(fullText), "%s", loadingFrames[frame]);
+        
+        tampilkanASCII();
+        printCenteredAtRow(fullText, row);
+
+        Sleep(1000);
+        frame = (frame + 1) % numFrames;
+
+        if (_kbhit()) {
+            if (_getch() == '\r') { 
+            	inputNama();
+                break;
+            }
+        }
+    }
+}
+
+void inputNama(){
+    int frame = 0;
+    int row = 16; 
+    char Nama[100];
+    printCenteredAtRow("Input Nama: ", row);
+    scanf("%99s", Nama); 
+    getchar(); 
+    
+    menuUser(); 
+}
+
+void menuUser() {
+	int pilihan;
+	printCenteredAtRow("Mythora Turn Based RPG", 13);
+	printCenteredAtRow("#===================================================================================================#", 14);
+	printCenteredAtRow("| 1. New Game                                                                                       |", 15);
+	printCenteredAtRow("| 2. Load Game                                                                                      |", 16);
+	printCenteredAtRow("| 3. Exit                                                                                           |", 17);
+	printCenteredAtRow("#===================================================================================================#", 18);
+	printCenteredAtRow("Pilihan:", 19);
+	scanf("%d", &pilihan);
+	getchar(); 
+	pilihMenu(pilihan);
+}
+
+void pilihMenu(int pilihan){
+    switch (pilihan) {
+        case 1:
+            inputCharUser();
+            break;
+        case 2: 
+            printf("Buat lanjut progress");
+            break;
+        case 3:
+        	exit(0);
+            break;
+        default:
+            printf("Pilihan tidak valid\n");
+            break;
+    }
+}
+
 void drawBorder() {
     setColor(15); // PUTIH
     
@@ -86,11 +177,18 @@ void drawUI(const Map *map, addressChar karakter) {
     gotoxy(86, HEIGHT + 1);
 	printf(WHITE_BG " " RESET);	
     
-    gotoxy(x, 2);
-    printf("HP : %d\n", karakter->Hp);
-	gotoxy(x, 3);
+    gotoxy(x, 1);
+    printf("HP    : %d\n", karakter->Hp);
+	gotoxy(x, 2);
 	printf("LEVEL : %d\n", karakter->Lvl);
-    
+	gotoxy(x, 3);
+    printf("EXP   : %d\n", karakter->Exp);
+    gotoxy(x, 4);
+    printf("Gold  : %d\n", karakter->Gold);
+    gotoxy(x, 6);
+    printf("   === INventory ===");
+    gotoxy(x, 7);
+    tampilkanInventoryKarakter(karakter);
     // border atas bawah
     while(x <= 115){
     	gotoxy(x, 0);
@@ -120,6 +218,7 @@ void drawUI(const Map *map, addressChar karakter) {
     gotoxy(30, HEIGHT + 7);
     setColor(15);
     printf("Camera/Viewport System - Explore the %dx%d world!", WORLD_WIDTH, WORLD_HEIGHT);
+    gotoxy(30, HEIGHT + 8);
 }
 
 void drawBox(int startX, int startY, int width, int height) {
@@ -154,7 +253,7 @@ void drawBox(int startX, int startY, int width, int height) {
     printf("+");
 }
 
-void drawCombatUi(addressChar *k, Enemy *enemy){
+int drawCombatUi(addressChar *k, Enemy *enemy){
     int lastWidth = 0, lastHeight = 0;
     int termWidth, termHeight;
     
@@ -196,10 +295,10 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
         //drawCombatAt(marginX + (availableWidth / 2 - 15), 0);
         
         // ====== TAMPILKAN ENEMY FIGURE DI TENGAH KOTAK BESAR ======
-        int enemyX = marginX + (availableWidth / 2 - 15); // Posisi X untuk enemy (tengah)
-        int enemyY = marginY + 7; // Posisi Y untuk enemy
+        int enemyX = marginX + (availableWidth / 2 - 15); 
+        int enemyY = marginY + 7; 
         
-        // Tampilkan ASCII art berdasarkan tipe enemy
+        // Tampilkan ASCII art berdasarkan tipe enemy 
         switch(enemy->Type) {
             case SLIME:
                 drawSlimeAt(enemyX - 15, enemyY - 5);
@@ -243,26 +342,29 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
         gotoxy(enemyStatusX, marginY + 6);
         printf("DEF: %d", enemy->Def);
                 
-        //4 kotak kecil di bawah
-        int smallBoxHeight = availableHeight - bigBoxHeight - 6;
-        int smallBoxWidth = (availableWidth - 6) / 4;
-        int smallBoxY = marginY + bigBoxHeight + 1 + 7;
-                
-        // Kotak 1-4
+        //4 kotak kecil di bawah untk menampilkan log battle
+        int smallBoxHeight = availableHeight - bigBoxHeight - 8;
+        int smallBoxWidth = (availableWidth - 6) / 5;
+        int smallBoxY = marginY + bigBoxHeight + 8;
+        
+        // Kotak 1-5
         drawBox(marginX + 2, smallBoxY, smallBoxWidth, smallBoxHeight);
         drawBox(marginX + 2 + smallBoxWidth + 1, smallBoxY, smallBoxWidth, smallBoxHeight);
         drawBox(marginX + 2 + (smallBoxWidth + 1) * 2, smallBoxY, smallBoxWidth, smallBoxHeight);
         drawBox(marginX + 2 + (smallBoxWidth + 1) * 3, smallBoxY, smallBoxWidth, smallBoxHeight);
+        drawBox(marginX + 2 + (smallBoxWidth + 1) * 4, smallBoxY, smallBoxWidth, smallBoxHeight);
         
         // Label untuk setiap kotak action
         gotoxy(marginX + 2 + smallBoxWidth/2 - 3, smallBoxY + 1);
         printf("ATTACK");
         gotoxy(marginX + 2 + smallBoxWidth + 1 + smallBoxWidth/2 - 4, smallBoxY + 1);
-        printf("DEFENSE");
+        printf("SKILL");
         gotoxy(marginX + 2 + (smallBoxWidth + 1) * 2 + smallBoxWidth/2 - 4, smallBoxY + 1);
-        printf("USE ITEM");
+        printf("DEFENSE");
         gotoxy(marginX + 2 + (smallBoxWidth + 1) * 3 + smallBoxWidth/2 - 3, smallBoxY + 1);
-        printf("ESCAPE");
+        printf("PAKE ITEM");
+        gotoxy(marginX + 2 + (smallBoxWidth + 1) * 4 + smallBoxWidth/2 - 3, smallBoxY + 1);
+        printf("ESCPAE");
         
         // Tampilkan skill enemy di bawah figure
         gotoxy(enemyStatusX, marginY + 7);
@@ -273,7 +375,7 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
         
         // Instruksi input
         gotoxy(marginX + 4, termHeight - 15);
-        printf("Press 1-4 to select action, or Q to quit");
+        printf("Press A (Attack), F (Skill), D (Defense), R (Pake Item), E (Escape)");
                 
         // Update ukuran terakhir
         lastWidth = termWidth;
@@ -283,42 +385,16 @@ void drawCombatUi(addressChar *k, Enemy *enemy){
         if(kbhit()) {
             char input = getch();
             switch(input) {
-                case '1':
-                    gotoxy(marginX + 4, termHeight - 15);
-                    printf("Attack selected! Press any key to continue...");
-                    getch(); 
-                    clearScreen(); 
-                    return; 
-                case '2':
-                    gotoxy(marginX + 4, termHeight - 15);
-                    printf("Defense selected! Press any key to continue...");
-                    getch();
-                    clearScreen();
-                    return;
-                case '3':
-                    gotoxy(marginX + 4, termHeight - 15);
-                    printf("Use Item selected! Press any key to continue...");
-                    getch();
-                    clearScreen();
-                    return;
-                case '4':
-                case 'e':
-                case 'E':
-                    gotoxy(marginX + 4, termHeight - 15);
-                    printf("Escape selected! Press any key to continue...");
-                    getch();
-                    clearScreen();
-                    drawBorder();
-                    return;
-                case 'q':
-                case 'Q':
-                case 27: 
-                    gotoxy(marginX + 4, termHeight - 15);
-                    printf("Exiting combat... Press any key to continue...");
-                    getch();
-                    clearScreen();
-                    drawBorder();
-                    return;
+                case 'A': case 'a':
+                    return 1;
+                case 'F': case 'f':
+                	return 2;
+                case 'D': case 'd':
+                    return 3;
+                case 'R': case 'r':
+                    return 4;
+                case 'E': case 'e':
+                    return 5;
             }
         }
         Sleep(100);
@@ -394,7 +470,7 @@ void drawShopUI(addressChar *k, addressShopItem shop){
 			    drawpotionAt(xPotion[i], yPotion);
 			
 			    // 2. lalu beri warna teks sesuai highlight
-			    if (i == selectedIndex) setColor(14); // kuning
+			    if (i == selectedIndex)setColor(14); // kuning
 			    else setColor(7); // putih
 			
 			    gotoxy(xPotion[i] + 1, 25);
@@ -425,7 +501,7 @@ void drawShopUI(addressChar *k, addressShopItem shop){
             // Update ukuran terakhir
             lastWidth = termWidth;
             lastHeight = termHeight;
-            shopMode = 1; // Set ke mode interaktif
+            shopMode = 1; 
         }
         
         // Handle input dari user
@@ -443,7 +519,7 @@ void drawShopUI(addressChar *k, addressShopItem shop){
 			        if (selectedIndex < 2) selectedIndex++; 
 			        shopMode = 0;
 			        break;
-            	case 13:
+            	case 13: 
 				    {
 				        addressShopItem selected = shop;
 				        for (int i = 0; i < selectedIndex; i++) selected = selected->next;
@@ -452,91 +528,23 @@ void drawShopUI(addressChar *k, addressShopItem shop){
     					shopMode = 0;
 				    }
 				    break;
-                case 'b':
-                case 'B':
+                case 'b': case 'B':
                     pembelianItemShop(k, shop);
                     clearInputArea();
                     shopMode = 0; 
-                    break;                  
-                case 'q':
-                case 'Q':
+                    break;
+                    
+                case 'q': case 'Q':
                 	clearScreen();
-                    return;                
+                    return; 
+                    
                 default:
                 	gotoxy(113, 22);
-        			printf("refreshing...");
                     Sleep(100);
                     clearInputArea();
                     break;
             }
         }
         Sleep(100); 
-    }
-}
-
-void gameLoop(Map *map, addressChar k, addressShopItem shop[]) {
-    int running = 1;
-    char key;
-    
-    clearScreen();
-    hideCursor();
-    drawBorder();
-    drawMap(map);
-    drawUI(map,k);
-    
-    while (running) {
-        if (_kbhit()) {
-            key = getInput();
-            
-            if (!isValidInput(key)) continue;
-            
-            switch (key) {
-                case 'w': case 'W': case 72: 
-                    movePlayer(map, UP, &k, shop);
-                    break;
-                case 's': case 'S': case 80:
-                    movePlayer(map, DOWN, &k, shop);
-                    break;
-                case 'a': case 'A': case 75: 
-                    movePlayer(map, LEFT, &k, shop);
-                    break;
-                case 'd': case 'D': case 77: 
-                    movePlayer(map, RIGHT, &k, shop);
-                    break;
-                case 'z': case 'Z':
-                    gotoxy(0, HEIGHT + 6);
-                    setColor(11);
-                    printf("Interacting...                                      ");
-                    Sleep(1000);
-                    gotoxy(0, HEIGHT + 6);
-                    printf("                                                    ");
-                    break;
-                case 27: 
-                    gotoxy(0, HEIGHT + 6);
-                    setColor(12);
-                    printf("Game paused. Press any key to continue...           ");
-                    getch();
-                    gotoxy(0, HEIGHT + 6);
-                    printf("                                                    ");
-                    break;
-                case 'q': case 'Q':
-                    running = 0;
-                    break;
-            }
-            
-            drawBorder(); 
-            
-            // Gambar ulang kalo player bergerak 
-            if (key == 'w' || key == 'W' || key == 72 ||
-                key == 's' || key == 'S' || key == 80 ||
-                key == 'a' || key == 'A' || key == 75 ||
-                key == 'd' || key == 'D' || key == 77) {
-                drawMap(map);
-                drawUI(map,k);
-            }
-        } else {
-            drawBorder();
-        }
-        Sleep(50); 
     }
 }
