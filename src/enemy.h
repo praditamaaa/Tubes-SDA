@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+
+#include "playablechar.h"
+#include "common.h"
+
 // #include "user.h" / #include "shape.h"
 // Mengimplementasikan header user/pemain atau shape/karakter
 // untu menentukan level musuh (Berada di rentang 10 Lv dengan user)
@@ -16,9 +20,9 @@ typedef enum{
 }EnemyType;
 
 typedef enum{
-	SKILL_ATTACK
-	SKILL_DEFENSE
-	SKILL_HEAL
+	SKILL_ATTACK,
+	SKILL_DEFENSE,
+	SKILL_HEAL,
 }SkillType;
 
 typedef struct{
@@ -34,7 +38,7 @@ typedef struct{
 }Buff;
 
 typedef struct{
-	EnemyType Type
+	EnemyType Type;
 	int Lv;
 	int Hp;
 	int Att;
@@ -44,11 +48,11 @@ typedef struct{
 	Skill skills[3];
 }Enemy;
 
-void initEnemy(Enemy *enemy, EnemyType Type, const Shape *player);
+void initEnemy(Enemy *enemy, EnemyType Type, addressChar player);
 Skill createSkill(const char *name, SkillType type, int power, float scale);
 int getEnemyHP(const Enemy *enemy);
 int getEnemyAtt(const Enemy *enemy);
 int getEnemyDef(const Enemy *enemy);
-int checkEncounter();
+int encounter();
 
 #endif

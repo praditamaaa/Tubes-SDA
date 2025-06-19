@@ -1,4 +1,5 @@
 #include "gameLoop.h"
+
 void combatLoop(addressChar player, Enemy *enemy) {
     EffectQueue enemyEffectQueue = {NULL, NULL}; 
     
@@ -164,9 +165,13 @@ void gameLoop() {
     int running = 1;
     char key;
 
+	//make database file direction
+	mkdir("database");
+	
     // Inisialisasi semua komponen
     srand(time(NULL));
     Map gameMap;
+    addressUser user = NULL;
     addressChar player = NULL;
     addressShopItem shop = NULL;
 
@@ -176,10 +181,7 @@ void gameLoop() {
     initMap(&gameMap);
 
     // Welcome screen dan pemilihan karakter
-    welcomeScreen(); 
-
-    int pilihan = inputCharUser();
-    pilihKarakter(&player, pilihan);
+    welcomeScreen(&user); 
 
     // Setup awal tampilan
     clearScreen();

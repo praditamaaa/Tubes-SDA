@@ -15,7 +15,7 @@ void doPlayerAttack(addressChar player, Enemy *enemy) {
     enemy->Hp -= damage;
     if (enemy->Hp < 0) enemy->Hp = 0;
 
-    printf(" KAmu mmeneyrang dengan %d damage!\n", damage);
+    printf(" KAmu menyerang dengan %d damage!\n", damage);
 }
 
 void doPlayerDefense(addressChar player) {
@@ -24,15 +24,17 @@ void doPlayerDefense(addressChar player) {
 }
 
 void usePlayerSkill(addressChar player, Enemy *enemy) {
+	int i;
+	
 	if (player->skillCount == 0) {
         printf("Kamu belum memiliki skill!\n");
         return;
     }
 
     printf("Pilih Skill:\n");
-    for (int i = 0; i < player->skillCount; i++) {
+    for (i = 0; i < player->skillCount; i++) {
         printf("%d. %s (Power: %d, Scale: %.2f)\n", i + 1, 
-               player->skills[i].skillName);
+               player->skills[i]->skillName); // . menjadi ->
     }
 
     int pilihan;
@@ -45,7 +47,7 @@ void usePlayerSkill(addressChar player, Enemy *enemy) {
         return;
     }
 
-    SkillList *skill = &player->skills[pilihan - 1];
+    SkillList *skill = player->skills[pilihan - 1]; //menghapus &
 
     int damage = (int)(skill->power * skill->scale) - (enemy->Def / 2);
     if (damage < 1) damage = 1;

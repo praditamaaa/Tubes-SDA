@@ -9,9 +9,9 @@
 #include "playablechar.h"
 #include "figure.h"
 
-void menuUser();
+void menuUser(addressUser user);
 void pilihMenu(int pilihan);
-void welcomeScreen();
+void welcomeScreen(addressUser user);
 void tampilkanASCII();
 void inputNama();
 

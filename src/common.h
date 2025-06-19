@@ -7,6 +7,7 @@
 #include <time.h>
 #include <conio.h>
 #include <windows.h>
+#include <sys/stat.h>
 
 //kebutuhan border layar
 #define WHITE_BG "\033[47m"  
@@ -26,6 +27,7 @@ typedef char infotype[100];
 
 typedef struct tItem* addressItem;
 typedef struct tChar* addressChar;
+typedef struct User* addressUser;
 
 typedef enum{
 	UP,
@@ -68,6 +70,13 @@ typedef struct tItem {
     addressItem next;
     addressItem prev;
 } tItem;
+
+typedef struct user {
+	STRING name;
+	STRING password;	
+	int score;
+	addressUser next;
+} User;
 
 void clearScreen();
 void gotoxy(int x, int y);

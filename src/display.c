@@ -16,7 +16,7 @@ void tampilkanASCII() {
     printCenteredAtRow("                                                                                                    ",13);
 }
 
-void welcomeScreen() {
+void welcomeScreen(addressUser user) {
 	const char* loadingFrames[] = {
         "Tekan Enter untuk Memulai   ",
         "Tekan Enter untuk Memulai.  ",
@@ -42,7 +42,7 @@ void welcomeScreen() {
 
         if (_kbhit()) {
             if (_getch() == '\r') { 
-            	inputNama();
+            	menuUser(&user);
                 break;
             }
         }
@@ -57,10 +57,10 @@ void inputNama(){
     scanf("%99s", Nama); 
     getchar(); 
     
-    menuUser(); 
+    inputCharUser(); 
 }
 
-void menuUser() {
+void menuUser(addressUser user) {
 	int pilihan;
 	printCenteredAtRow("Mythora Turn Based RPG", 13);
 	printCenteredAtRow("#===================================================================================================#", 14);
@@ -77,7 +77,7 @@ void menuUser() {
 void pilihMenu(int pilihan){
     switch (pilihan) {
         case 1:
-            inputCharUser();
+            inputNama();
             break;
         case 2: 
             printf("Buat lanjut progress");
@@ -115,9 +115,11 @@ void drawBorder() {
 }
 
 void drawMap(const Map *map) {
-    for (int screenY = 0; screenY < HEIGHT; screenY++) {
+	int i, screenY;
+    for (screenY = 0; screenY < HEIGHT; screenY++) {
         gotoxy(31, screenY + 1);
-        for (int screenX = 0; screenX < WIDTH; screenX++) {
+        int screenX;
+        for (screenX = 0; screenX < WIDTH; screenX++) {
             // Konversi koordinat screen ke koordinat map
             int worldX = map->cameraX + screenX;
             int worldY = map->cameraY + screenY;
@@ -165,7 +167,8 @@ void drawUI(const Map *map, addressChar karakter) {
     gotoxy(32, HEIGHT + 3);
     printf(" Press 'ESC' to pause, 'Q' to quit.              ");
     gotoxy(31, HEIGHT + 5);
-    for (int i = 30; i <= WIDTH + 31; i++) {
+    int i;
+    for (i = 30; i <= WIDTH + 31; i++) {
         printf(WHITE_BG " " RESET);
     }
     
@@ -464,7 +467,8 @@ void drawShopUI(addressChar *k, addressShopItem shop){
             int yPotion = 7;
             addressShopItem temp = shop;
             
-            for (int i = 0; i < 3; i++) {
+            int i;
+            for (i = 0; i < 3; i++) {
 			    // 1. gambar tetap putih
 			    setColor(7);
 			    drawpotionAt(xPotion[i], yPotion);
@@ -522,7 +526,8 @@ void drawShopUI(addressChar *k, addressShopItem shop){
             	case 13: 
 				    {
 				        addressShopItem selected = shop;
-				        for (int i = 0; i < selectedIndex; i++) selected = selected->next;
+				        int i;
+				        for (i = 0; i < selectedIndex; i++) selected = selected->next;
 				        pembelianItemShop(k, selected); 
 				        clearInputArea();
     					shopMode = 0;
