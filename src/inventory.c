@@ -16,7 +16,6 @@ void tambahItem(Inventory* inv, tItem item) {
             inv->items[i].Type == item.Type &&
             memcmp(&inv->items[i].effect, &item.effect, sizeof(Effect)) == 0) {
             
-            // Jika item sama, tambahkan jumlah
             inv->items[i].bag += item.bag;
             return;
         }
@@ -53,22 +52,36 @@ int isNumber(const char *str) {
 }
 
 tItem* pilihItem(Inventory *inv) {
-    if (inv->count == 0) return NULL;
-    printf("\nPilih item yang ingin digunakan\n");
+    if (inv->count == 0) {
+    	gotoxy(6, 22);
+    	printf("inventory masih kosong");
+        return 0;
+    }
+    
+    gotoxy(6, 23);
+    printf("Pilih item yang ingin digunakan");
+    gotoxy(6, 24);
     printf("Ketik nama atau nomor item: ");
 
+    // Bersihkan stdin buffer
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);
+
+	gotoxy(57, HEIGHT + 10);
     char input[50];
     fgets(input, sizeof(input), stdin);
-    input[strcspn(input, "\n")] = '\0';
+    input[strcspn(input, "\n")] = '\0'; // hapus newline dari fgets
 
     int index = -1;
 
+    // Cek apakah input berupa angka
     if (isNumber(input)) {
         int nomor = atoi(input);
         if (nomor >= 1 && nomor <= inv->count) {
             index = nomor - 1;
         }
     } else {
+        // Cocokkan dengan nama item
         for (int i = 0; i < inv->count; i++) {
             if (strcmp(inv->items[i].item, input) == 0) {
                 index = i;
@@ -83,7 +96,7 @@ tItem* pilihItem(Inventory *inv) {
         return NULL;
     }
 
-    return &inv->items[index]; 
+    return &inv->items[index];
 }
 
 void hapusItem(Inventory *inv, int index) {
