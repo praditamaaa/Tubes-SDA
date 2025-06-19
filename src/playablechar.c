@@ -1,3 +1,14 @@
+/*
+.| Program : skilltree.c
+.| Berisi logika atau isi modul dari data header playablechar.h 
+.|
+.| Tujuan : Membuat karakter yang bisa digunakan oleh user 
+.|			dengan atributnya masing - masing
+.| 
+.| Oleh : Afriza Choirie Saputra
+*/
+
+
 #include "playablechar.h"
 
 int inputCharUser() {
