@@ -12,6 +12,7 @@
 #include "common.h"
 #include "quest.h"
 #include "runtime.h"
+#include "playablechar.h"
 
 typedef struct user* addressUser;
 typedef struct user {

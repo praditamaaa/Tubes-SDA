@@ -11,7 +11,7 @@
 
 typedef struct RuntimeStats {
     int killCountPerType[MAX_ENEMY_TYPE];
-    int totalEscape;
+    int totalBattlesEscape;
     int completedQuests;
 } runTimeStats;
 

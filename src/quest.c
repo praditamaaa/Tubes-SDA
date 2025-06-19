@@ -1,4 +1,5 @@
 #include "quest.h"
+#include "User.h"
 
 addressQuest createQuest(int id, QuestType type, const char* desc, int target) {
     addressQuest newQuest = (addressQuest)malloc(sizeof(Tquest));
@@ -111,7 +112,7 @@ void assignRandomQuest(addressUser user) {
     printf("New quest accepted: %s\n", descriptions[randomIdx]);
 }
 
-void updateQuests(addressQuest head, addressChar k, RunTimeStats* stats) {
+void updateQuests(addressQuest head, addressChar k, runTimeStats* stats) {
     while (head) {
         if (!head->completed) {
             switch (head->type) {
@@ -142,7 +143,7 @@ void updateQuests(addressQuest head, addressChar k, RunTimeStats* stats) {
                     }
                     break;
                 case QUEST_ESCAPE_BATTLE:
-                    head->progress = stats->battlesEscaped;
+                    head->progress = stats->totalBattlesEscape;
                     break;
                 case QUEST_TOTAL_QUEST_COMPLETED:
                     head->progress = stats->completedQuests;

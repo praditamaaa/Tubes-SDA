@@ -1,3 +1,11 @@
+/*
+.| Program : shop.h
+.| Header yang berisikan modul untuk membuat dan membeli item di shop
+.| dengan data dari playablechar dan common
+.|
+.| Oleh : Afriza Choirie Saputra
+*/
+
 #ifndef shop_h
 #define shop_h
 #include "playablechar.h"

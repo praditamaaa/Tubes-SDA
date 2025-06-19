@@ -1,6 +1,5 @@
 #ifndef gameloop_h
 #define gameloop_h
-#include "display.h"
 #include "playablechar.h"
 #include "combat.h"
 #include "common.h"

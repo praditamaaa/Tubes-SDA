@@ -2,7 +2,6 @@
 #define NAVIGASI_H
 
 #include "User.h"
-#include "display.h"
 #include "common.h"
 #include "map.h"
 #include "shop.h"

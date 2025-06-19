@@ -1,4 +1,5 @@
 #include "navigasi.h"
+#include "display.h"
 
 void movePlayer(Map *map, Direction dir, addressChar* k, addressShopItem shop[], addressUser loggedUser) {
     int currX = map->playerX;

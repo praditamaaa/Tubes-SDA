@@ -1,6 +1,15 @@
+/*
+.| Program : playablechar.c
+.| Berisi logika atau isi modul dari data header playablechar.h 
+.|
+.| Tujuan : Membuat karakter yang bisa digunakan oleh user 
+.|			dengan atributnya masing - masing
+.| 
+.| Oleh : Afriza Choirie Saputra
+*/
 #include "playablechar.h"
 
-void inputCharUser(addressChar* k) {
+int inputCharUser() {
 	int pilihan;
 	printCenteredAtRow("Pilih Tipe Karakter", 13);
 	printCenteredAtRow("#===================================================================================================#", 14);
@@ -11,7 +20,7 @@ void inputCharUser(addressChar* k) {
 	printCenteredAtRow("Pilihan:", 19);
 	scanf("%d", &pilihan);
 	getchar(); 
-	pilihKarakter(k, pilihan);
+	return pilihan;
 }
 
 void pilihKarakter(addressChar* k, int input){
@@ -107,35 +116,34 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
         
         (*k)->skilltree = initSkillTree(charType);
         resetSkillTree((*k)->skilltree);
-        efekSkill(*k);
-    }
+        levelUp(*k);
+	}
 }
 
 //===================== SKILLLLLL =============================
 int expLevel(addressChar k){
-	return k->Lvl * 100;
+	return (k->Lvl + 1) * 100;
 }
 	
 void levelUp(addressChar k){
 	if (k == NULL) return;
 	
-	int NextLvlExp = expLevel(k);
 	int skillId = 1;
+	int NextLvlExp = expLevel(k);
 	
-	while(k->Exp > NextLvlExp){
+	while(k->Exp >= NextLvlExp){
 		k->Exp -= NextLvlExp;
 		k->Lvl += 1;
 		unlockNode(k->skilltree, skillId);
-		efekSkill(k);
+		efekSkill(k, skillId);
 		NextLvlExp = expLevel(k);
 		skillId++;
 	}
 }
 
-void efekSkill(addressChar k) {
+void efekSkill(addressChar k, int skillId) {
     if (k == NULL) return;
 
-    int skillId = 0;
     int valueEfek = 0;
     float persentase = 0.0f;
     char* tipeEfek;
@@ -255,4 +263,22 @@ void pilihItemKarakter(addressChar karakter) {
     }
 
     Sleep(1500);
+}
+
+int getPower(addressChar k){
+    int attack, hp, defense, level;
+    int power, tempPow;
+
+    attack =  k->Att;
+    hp = k->Hp;
+    defense = k->Def;
+    level = k->Lvl;
+
+    power = hp/defense;
+    tempPow = level/10;
+
+    power += attack;
+    power = power * tempPow;
+
+    return power;
 }

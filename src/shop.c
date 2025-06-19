@@ -1,3 +1,14 @@
+/*
+.| Program : shop.c
+.| Berisi logika atau isi modul dari data header shop.h
+.|
+.| Tujuan : Membuat item yang akan ijual di shop dan bisa 
+.|		dibeli oleh user yang kemudian disimpan 
+.|		di inventory untuk dapat digunakan di combat
+.| 
+.| Oleh : Afriza Choirie Saputra
+*/
+
 #include "shop.h"
 
 void buatShopItem(addressShopItem* i) {
