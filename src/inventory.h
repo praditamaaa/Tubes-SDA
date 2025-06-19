@@ -12,9 +12,9 @@ typedef struct {
 void buatItem(addressItem *i);
 void Isi_item(tItem *item, char nama[], int bag, ItemType type, Effect effect);
 void tambahItem(Inventory* inv, tItem item);
-void tampilkanInventory(Inventory *inv); 
+void tampilkanInventory(Inventory *inv, int x, int y);
 int isNumber(const char *str);
-void pilihItem(Inventory *inv);
+tItem* pilihItem(Inventory *inv);
 void hapusItem(Inventory *inv, int index);
 
 #endif
