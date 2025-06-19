@@ -9,12 +9,17 @@
 #include "playablechar.h"
 #include "figure.h"
 
+void menuUser();
+void pilihMenu(int pilihan);
+void welcomeScreen();
+void tampilkanASCII();
+void inputNama();
+
 void drawBorder();
 void drawMap(const Map *map);
 void drawUI(const Map *map, addressChar karakter);
 void drawBox(int startX, int startY, int width, int height);
-void drawCombatUi(addressChar *k, Enemy *enemy);
+int drawCombatUi(addressChar *k, Enemy *enemy);
 void drawShopUI(addressChar *k, addressShopItem shop);
-void gameLoop(Map *map, addressChar k, addressShopItem shop[]);
 
 #endif
