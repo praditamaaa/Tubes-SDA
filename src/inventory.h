@@ -1,3 +1,11 @@
+/*
+.| Program : inventory.h
+.| Header yang berisikan modul untuk kelola item player
+.| dengan data dari common.h
+.|
+.| Oleh : Afriza Choirie Saputra
+*/
+
 #ifndef inventory_h
 #define inventory_h
 #include "common.h"
