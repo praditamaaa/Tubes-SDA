@@ -1,3 +1,12 @@
+/*
+.| Program : input.c
+.| Berisi logika atau isi modul dari data header input.h 
+.|
+.| Tujuan : menghandle input keyboard
+.| 
+.| Oleh : Afriza Choirie Saputra
+*/
+
 #include "input.h"
 char getInput() {
     return getch();
