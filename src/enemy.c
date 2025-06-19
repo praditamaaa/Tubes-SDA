@@ -1,6 +1,6 @@
 #inlcude "enemy.h"
 
-void initEnemy(Enemy *enemy, EnemyType Type, const Shape *player){
+void initEnemy(Enemy *enemy, EnemyType Type, addressChar player){
 	srand(time(NULL));
 	
 	enemy->Type = Type

@@ -41,7 +41,8 @@ void printCenteredAtRow(const char* text, int row) {
     // Bersihkan seluruh baris dulu
     COORD pos = { 0, (SHORT)row };
     SetConsoleCursorPosition(hOut, pos);
-    for(int i = 0; i < columns; i++) printf(" ");
+    int i;
+    for(i = 0; i < columns; i++) printf(" ");
     
     // Baru print teks yang diinginkan
     int padding = (columns - (int)strlen(text)) / 2;
@@ -54,7 +55,8 @@ void printCenteredAtRow(const char* text, int row) {
 
 // Fungsi untuk membersihkan area input
 void clearInputArea() {
-    for(int i = 20; i <= 26; i++) {
+    int i;
+	for(i = 20; i <= 26; i++) {
         gotoxy(113, i);
         printf("  ");
     }
