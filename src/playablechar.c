@@ -7,8 +7,6 @@
 .| 
 .| Oleh : Afriza Choirie Saputra
 */
-
-
 #include "playablechar.h"
 
 int inputCharUser() {
@@ -117,7 +115,7 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
         
         (*k)->skilltree = initSkillTree(charType);
         resetSkillTree((*k)->skilltree);
-        efekSkill(*k, 0);
+        levelUp(*k);
     }
 }
 
