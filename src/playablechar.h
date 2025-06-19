@@ -1,3 +1,11 @@
+/*
+.| Program : playablechar.h
+.| Header yang berisikan modul untuk membuat karakter
+.| dengan data dari common.h, inventory.h, dan skilltree.h
+.|
+.| Oleh : Afriza Choirie Saputra
+*/
+
 #ifndef playablechar_h
 #define playablechar_h
 #include "common.h"
