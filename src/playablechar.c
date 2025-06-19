@@ -1,6 +1,6 @@
 #include "playablechar.h"
 
-void inputCharUser(addressChar* k) {
+int inputCharUser() {
 	int pilihan;
 	printCenteredAtRow("Pilih Tipe Karakter", 13);
 	printCenteredAtRow("#===================================================================================================#", 14);
@@ -11,7 +11,7 @@ void inputCharUser(addressChar* k) {
 	printCenteredAtRow("Pilihan:", 19);
 	scanf("%d", &pilihan);
 	getchar(); 
-	pilihKarakter(k, pilihan);
+	return pilihan;
 }
 
 void pilihKarakter(addressChar* k, int input){
@@ -19,8 +19,7 @@ void pilihKarakter(addressChar* k, int input){
         return; 
     }
 
-    int pilihan = input; 
-    switch (pilihan) {
+    switch (input) {
         case 1:
             karakterA(k);
             break;
@@ -44,11 +43,11 @@ void karakterA(addressChar* k){
     }
 
     const char* nama = "Warrior";
-    int Hp = 150;
+    int Hp = 1500; //150
     int Exp = 0;
     int Gold = 0;
-    int Att = 10;
-    int Def = 8;
+    int Att = 100; //10
+    int Def = 200; //8
     int Lvl = 0;
     CharType charType = CHAR_A;    
     Isi_Stat(k, &Hp, &Att, &Def, &Lvl, charType, nama);
@@ -96,7 +95,7 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
         strncpy((*k)->nama, nama, sizeof((*k)->nama) - 1);
         (*k)->nama[sizeof((*k)->nama) - 1] = '\0';
         (*k)->Hp = *Hp;
-        (*k)->Exp = 0;
+        (*k)->Exp = 3000;
         (*k)->Gold = 100;
         (*k)->Att = *Att;
         (*k)->Def = *Def;
@@ -107,35 +106,35 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
         
         (*k)->skilltree = initSkillTree(charType);
         resetSkillTree((*k)->skilltree);
-        efekSkill(*k);
+        efekSkill(*k, 0);
     }
 }
 
 //===================== SKILLLLLL =============================
 int expLevel(addressChar k){
-	return k->Lvl * 100;
+	return (k->Lvl + 1) * 100;
 }
 	
 void levelUp(addressChar k){
 	if (k == NULL) return;
 	
-	int NextLvlExp = expLevel(k);
 	int skillId = 1;
+	int NextLvlExp = expLevel(k);
 	
-	while(k->Exp > NextLvlExp){
+	while(k->Exp >= NextLvlExp){
 		k->Exp -= NextLvlExp;
 		k->Lvl += 1;
 		unlockNode(k->skilltree, skillId);
-		efekSkill(k);
+		efekSkill(k, skillId); 
 		NextLvlExp = expLevel(k);
 		skillId++;
 	}
 }
 
-void efekSkill(addressChar k) {
+
+void efekSkill(addressChar k, int skillId) {
     if (k == NULL) return;
 
-    int skillId = 0;
     int valueEfek = 0;
     float persentase = 0.0f;
     char* tipeEfek;
@@ -158,7 +157,6 @@ void efekSkill(addressChar k) {
                     k->Def += valueEfek;
                     k->Att += valueEfek;
                 }
-                skillId++;
                 break;
 
             case PERCENTAGE_ADDITION:
@@ -168,8 +166,6 @@ void efekSkill(addressChar k) {
                 if (strcmp(tipeEfek, "HP Up+") == 0) k->Hp += (int)(k->Hp * persentase);
                 else if (strcmp(tipeEfek, "DEF Up+") == 0) k->Def += (int)(k->Def * persentase);
                 else if (strcmp(tipeEfek, "Attack Up+") == 0) k->Att += (int)(k->Att * persentase);
-
-                skillId++;
                 break;
 
             case SKILL_UNLOCK:
@@ -177,16 +173,13 @@ void efekSkill(addressChar k) {
                     target->node->data.skill->skillName,
                     target->node->data.skill->power,
                     target->node->data.skill->scale);
-
                 simpanSkill(k, target);
-                skillId++;
                 break;
         }
     } else {
         printf("Node ID %d tidak ditemukan.\n", skillId);
     }
 }
-
 
 void simpanSkill(addressChar k, SkillTree *node) {
     if (k == NULL || node == NULL || node->node->nodeType != SKILL_UNLOCK) return;
@@ -196,7 +189,7 @@ void simpanSkill(addressChar k, SkillTree *node) {
         return;
     }
 
-    SkillList *target = &k->skills[k->skillCount];  // Ambil pointer ke elemen berikutnya
+    SkillList *target = &k->skills[k->skillCount]; 
 
     strncpy(target->skillName, node->node->data.skill->skillName, sizeof(target->skillName) - 1);
     target->skillName[sizeof(target->skillName) - 1] = '\0';
@@ -217,12 +210,10 @@ void tambahItemKeKarakter(addressChar karakter, tItem* I){
 }
 
 void tampilkanInventoryKarakter(addressChar karakter) {
-    // Koordinat awal untuk tampilkan di kanan layar
     int startX = 92;  
     int startY = 9;
     int maxY = 28; 
 	   
-    // Bersihkan area inventory dulu
     for (int y = startY; y < maxY; y++) {
         gotoxy(startX, y);
         printf("                          "); 
@@ -234,13 +225,18 @@ void tampilkanInventoryKarakter(addressChar karakter) {
 void pilihItemKarakter(addressChar karakter) {
     tItem *dipilih = pilihItem(&(karakter->inventory));
     if (dipilih == NULL) return;
-
+    
+    gotoxy(30, HEIGHT + 10);
     printf("Menggunakan item: %s\n", dipilih->item);
 
     if (dipilih->Type == HealPotion) {
         karakter->Hp += dipilih->effect.heal.amount;
+        gotoxy(30, HEIGHT + 11);
         printf("HP bertambah %d\n", dipilih->effect.heal.amount);
-    } else if (dipilih->Type == BurnPotion || dipilih->Type == FreezePotion) {
+    } 
+	
+	if (dipilih->Type == BurnPotion || dipilih->Type == FreezePotion ) {
+    	gotoxy(30, HEIGHT + 11);
         printf("Item ini hanya bisa digunakan saat bertarung dengan musuh.\n");
         Sleep(1500);
         return;
@@ -254,4 +250,22 @@ void pilihItemKarakter(addressChar karakter) {
     }
 
     Sleep(1500);
+}
+
+int getPower(addressChar k){
+    int attack, hp, defense, level;
+    int power, tempPow;
+
+    attack =  k->Att;
+    hp = k->Hp;
+    defense = k->Def;
+    level = k->Lvl;
+
+    power = hp/defense;
+    tempPow = level/10;
+
+    power += attack;
+    power = power * tempPow;
+
+    return power;
 }

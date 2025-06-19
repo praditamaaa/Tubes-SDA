@@ -2,7 +2,6 @@
 #define playablechar_h
 #include "common.h"
 #include "inventory.h"
-#include "welcomesc.h"
 #include "skilltree.h"
 #include "skilltree_utils.h"
 #include "skilltree_save.h"
@@ -28,12 +27,12 @@ typedef struct tChar{
     Inventory inventory;
     SkillTree* skilltree;       
     CharType charType;
-	SkillList* skills[MAX_SKILL];
+	SkillList skills[MAX_SKILL];
     int skillCount;  
 } tChar;
 
 // ciptakan karakter
-void inputCharUser(addressChar* k);
+int inputCharUser();
 void pilihKarakter(addressChar* k, int pilihan);
 void karakterA(addressChar* k);
 void karakterM(addressChar* k);
@@ -43,13 +42,14 @@ void Isi_Stat(addressChar* k, int* Hp, int* Att, int* Def, int* Lvl, CharType ch
 // skill
 int expLevel(addressChar k);
 void levelUp(addressChar k);
-void efekSkill(addressChar k);
+void efekSkill(addressChar k, int skillId);
 void simpanSkill(addressChar k, SkillTree *node);
 
 // Inventory
-void tambahItemKeKarakter(addressChar karakter, addressItem* I);
+void tambahItemKeKarakter(addressChar karakter, tItem* I);
 void tampilkanInventoryKarakter(addressChar karakter);
 void pilihItemKarakter(addressChar karakter);
 
+int getPower(addressChar k);
 
 #endif
