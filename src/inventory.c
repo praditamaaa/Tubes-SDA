@@ -35,7 +35,8 @@ void tampilkanInventory(Inventory *inv, int x, int y) {
         gotoxy(x, y);
         printf("Inventory Masih Kosong.");
     } else {
-        for (int i = 0; i < inv->count; i++) {
+    	int i;
+        for (i = 0; i < inv->count; i++) {
             gotoxy(x, y + i);
             printf("%d. %s (%d)", i + 1, inv->items[i].item, inv->items[i].bag);
         }
@@ -82,7 +83,8 @@ tItem* pilihItem(Inventory *inv) {
         }
     } else {
         // Cocokkan dengan nama item
-        for (int i = 0; i < inv->count; i++) {
+        int i;
+        for (i = 0; i < inv->count; i++) {
             if (strcmp(inv->items[i].item, input) == 0) {
                 index = i;
                 break;
@@ -101,7 +103,8 @@ tItem* pilihItem(Inventory *inv) {
 
 void hapusItem(Inventory *inv, int index) {
     printf("Item '%s' habis dan dihapus dari inventory.\n", inv->items[index].item);
-    for (int i = index; i < inv->count - 1; i++) {
+    int i;
+    for (i = index; i < inv->count - 1; i++) {
         inv->items[i] = inv->items[i + 1];
     }
     inv->count--;

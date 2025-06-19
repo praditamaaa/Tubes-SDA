@@ -136,7 +136,7 @@ void loadGameChoice(addressUser* userList, addressUser* loggedUser) {
         getch();
     }
 }
-}
+
 
 
 void drawBorder() {
@@ -452,7 +452,7 @@ int drawCombatUi(addressChar *k, Enemy *enemy){
     }
 }
 
-void drawShopUI(addressChar *k, addressShopItem shop){
+void drawShopUI(addressChar *k, addressShopItem shop) {
     // border atas dan bawah
     int lastWidth = 0, lastHeight = 0;
     int termWidth, termHeight;
@@ -599,5 +599,6 @@ void drawShopUI(addressChar *k, addressShopItem shop){
             }
         }
         Sleep(100); 
+    }
     }
 }

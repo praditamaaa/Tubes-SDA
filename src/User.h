@@ -9,13 +9,18 @@
 
 #include<stdio.h>
 #include<string.h>
-#include"common.h"
+#include "common.h"
+#include "quest.h"
+#include "runtime.h"
 
 typedef struct user* addressUser;
 typedef struct user {
 	STRING name;
 	STRING password;	
 	int score;
+	runTimeStats stats;          
+    addressQuest questList;      
+    addressChar character;
 	addressUser next;
 } User;
 
@@ -25,6 +30,9 @@ typedef struct user {
 #define name(user) ((user)->name)
 #define password(user) ((user)->password)
 #define score(user) ((user)->score) 
+#define stats(user) ((user)->stats)
+#define questList(user) ((user)->questList)
+#define character(user) ((user)->character)
 #define next(user) ((user)->next)
 
 addressUser createUser(addressUser head, const STRING name, const STRING password);
