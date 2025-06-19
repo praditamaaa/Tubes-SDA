@@ -1,4 +1,3 @@
-
 #include "combat.h" 
 
 void doPlayerAttack(addressChar player, Enemy *enemy) {
@@ -36,7 +35,8 @@ void usePlayerSkill(addressChar player, Enemy *enemy) {
 	gotoxy(6, 22);
     printf("Pilih Skill:\n");
 
-    for (int i = 0; i < player->skillCount; i++) {
+	int i;
+    for (i = 0; i < player->skillCount; i++) {
     	gotoxy(6,22 + i);
         printf("%d. %s (Power: %d, Scale: %.2f)\n",
                i + 1,
