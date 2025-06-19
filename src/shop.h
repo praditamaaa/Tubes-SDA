@@ -1,5 +1,5 @@
 /*
-.| Program : skilltree_builder.h
+.| Program : shop.h
 .| Header yang berisikan modul untuk membuat dan membeli item di shop
 .| dengan data dari playablechar dan common
 .|
