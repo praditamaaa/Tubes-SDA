@@ -28,7 +28,6 @@ void tambahItemShop(addressShopItem* head, addressShopItem newItem) {
         newItem->prev = last;
     }
 }
-
 	
 void inisialisasiShop(addressShopItem* shop) {
     addressShopItem item1, item2, item3;
@@ -92,14 +91,14 @@ int hitungTotalHarga(addressShopItem shop, int jumlah) {
 int prosesPembayaran(addressChar* karakter, int totalHarga) {
     if ((*karakter)->Gold >= totalHarga) {
         (*karakter)->Gold -= totalHarga;
-        return 1; // Pembayaran berhasil
+        return 1;
     }
-    return 0; // Gold tidak cukup
+    return 0; 
 }
 
 int inputJumlahItem(){
     int jumlahDibeli;
-    gotoxy(113, 21); // Posisi input di bawah pilihan item
+    gotoxy(113, 21); 
     printf("Masukkan jumlah: ");
     scanf("%d", &jumlahDibeli);
     return jumlahDibeli;
@@ -119,8 +118,6 @@ void pembelianItemShop(addressChar* karakter, addressShopItem itemDipilih) {
         Sleep(2000);
         return;
     }
-    gotoxy(113, 21);
-    printf("%s", itemDipilih->item);
     int jumlahDibeli = inputJumlahItem();
     if (jumlahDibeli < 1 || jumlahDibeli > itemDipilih->stock) {
         gotoxy(113, 22);
