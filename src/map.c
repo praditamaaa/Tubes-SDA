@@ -13,8 +13,10 @@ void initMap(Map *map) {
     map->cameraY = centerY - HEIGHT / 2;
     
     // Inisialiasi map
-    for (int x = 0; x < WORLD_HEIGHT; x++) {
-        for (int y = 0; y < WORLD_WIDTH; y++) {
+    int x;
+    for (x = 0; x < WORLD_HEIGHT; x++) {
+    	int y;
+        for (y = 0; y < WORLD_WIDTH; y++) {
             // buat tembok map
             if (x == 0 || y == 0 || x == WORLD_HEIGHT - 1 || y == WORLD_WIDTH - 1) {
                 map->tiles[x][y] = TILE_WALL;
@@ -29,8 +31,9 @@ void initMap(Map *map) {
         }
     }
     
+    int i;
     // Add random walls throughout the world
-    for (int i = 0; i < 800; i++) {
+    for (i = 0; i < 800; i++) {
         int wallX = 2 + rand() % (WORLD_WIDTH - 4);
         int wallY = 2 + rand() % (WORLD_HEIGHT - 4);
         if (map->tiles[wallY][wallX] == TILE_EMPTY) {

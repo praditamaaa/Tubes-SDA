@@ -1,4 +1,5 @@
 #include "gameLoop.h"
+#include "display.h"
 
 void combatLoop(addressChar player, Enemy *enemy) {
     EffectQueue enemyEffectQueue = {NULL, NULL}; 
@@ -78,19 +79,19 @@ void combatLoop(addressChar player, Enemy *enemy) {
     }
 }
 
-void handleInput(Map *map, addressChar *k, addressShopItem shop[], char key, int *running) {
+void handleInput(Map *map, addressChar *k, addressShopItem shop[], addressUser loggedUser, char key, int *running) {
     switch (key) {
         case 'w': case 'W': case 72: 
-            movePlayer(map, UP, k, shop);
+            movePlayer(map, UP, k, shop, loggedUser);
             break;
         case 's': case 'S': case 80:
-            movePlayer(map, DOWN, k, shop);
+            movePlayer(map, DOWN, k, shop, loggedUser);
             break;
         case 'a': case 'A': case 75: 
-            movePlayer(map, LEFT, k, shop);
+            movePlayer(map, LEFT, k, shop, loggedUser);
             break;
         case 'd': case 'D': case 77: 
-            movePlayer(map, RIGHT, k, shop);
+            movePlayer(map, RIGHT, k, shop, loggedUser);
             break;
         case 'z': case 'Z':
             clearScreen();
@@ -181,7 +182,7 @@ void gameLoop() {
     initMap(&gameMap);
 
     // Welcome screen dan pemilihan karakter
-    welcomeScreen(user); 
+    welcomeScreen(&user); 
 
     // Setup awal tampilan
     clearScreen();
@@ -196,7 +197,7 @@ void gameLoop() {
 
             if (!isValidInput(key)) continue;
 
-            handleInput(&gameMap, &player, &shop, key, &running);
+            handleInput(&gameMap, &player, &shop, user, key, &running);
 
             if (needsRedraw(key)) {
                 drawBorder();

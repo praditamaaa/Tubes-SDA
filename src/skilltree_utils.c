@@ -123,7 +123,7 @@ void printSkillTreeStatus(SkillTree *root, int level) {
     }
 }
 
-int getUnlockableNodes(SkillTree *root, int *unlockableIds, int maxIds) {
+int getUnlockableNodes(SkillTree *root, int *unlockableIds, int maxId) {
     int count = 0;
     int totalNodes = countNodes(root);
 

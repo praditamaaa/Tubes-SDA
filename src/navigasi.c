@@ -1,6 +1,7 @@
 #include "navigasi.h"
+#include "display.h"
 
-void movePlayer(Map *map, Direction dir, addressChar* k, addressShopItem shop[]) {
+void movePlayer(Map *map, Direction dir, addressChar* k, addressShopItem shop[], addressUser loggedUser) {
     int currX = map->playerX;
     int currY = map->playerY;
     
@@ -61,7 +62,8 @@ void movePlayer(Map *map, Direction dir, addressChar* k, addressShopItem shop[])
             setColor(13); // Magenta
             printf("Quest found!                                        ");
             Sleep(1000);
-            //tempat quest dipanggil
+            assignRandomQuest(loggedUser); 
+    		Sleep(1000);
             gotoxy(30, HEIGHT + 6);
             printf("                                                    ");
         }

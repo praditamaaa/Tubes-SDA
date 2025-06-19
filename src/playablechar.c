@@ -28,7 +28,8 @@ void pilihKarakter(addressChar* k, int input){
         return; 
     }
 
-    switch (input) {
+    int pilihan = input; 
+    switch (pilihan) {
         case 1:
             karakterA(k);
             break;
@@ -52,11 +53,11 @@ void karakterA(addressChar* k){
     }
 
     const char* nama = "Warrior";
-    int Hp = 1500; //150
+    int Hp = 150;
     int Exp = 0;
     int Gold = 0;
-    int Att = 100; //10
-    int Def = 200; //8
+    int Att = 10;
+    int Def = 8;
     int Lvl = 0;
     CharType charType = CHAR_A;    
     Isi_Stat(k, &Hp, &Att, &Def, &Lvl, charType, nama);
@@ -104,7 +105,7 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
         strncpy((*k)->nama, nama, sizeof((*k)->nama) - 1);
         (*k)->nama[sizeof((*k)->nama) - 1] = '\0';
         (*k)->Hp = *Hp;
-        (*k)->Exp = 3000;
+        (*k)->Exp = 0;
         (*k)->Gold = 100;
         (*k)->Att = *Att;
         (*k)->Def = *Def;
@@ -116,7 +117,7 @@ void Isi_Stat(addressChar* k, int *Hp, int *Att, int *Def, int *Lvl, CharType ch
         (*k)->skilltree = initSkillTree(charType);
         resetSkillTree((*k)->skilltree);
         levelUp(*k);
-    }
+	}
 }
 
 //===================== SKILLLLLL =============================
@@ -134,12 +135,11 @@ void levelUp(addressChar k){
 		k->Exp -= NextLvlExp;
 		k->Lvl += 1;
 		unlockNode(k->skilltree, skillId);
-		efekSkill(k, skillId); 
+		efekSkill(k, skillId);
 		NextLvlExp = expLevel(k);
 		skillId++;
 	}
 }
-
 
 void efekSkill(addressChar k, int skillId) {
     if (k == NULL) return;
@@ -166,6 +166,7 @@ void efekSkill(addressChar k, int skillId) {
                     k->Def += valueEfek;
                     k->Att += valueEfek;
                 }
+                skillId++;
                 break;
 
             case PERCENTAGE_ADDITION:
@@ -175,6 +176,8 @@ void efekSkill(addressChar k, int skillId) {
                 if (strcmp(tipeEfek, "HP Up+") == 0) k->Hp += (int)(k->Hp * persentase);
                 else if (strcmp(tipeEfek, "DEF Up+") == 0) k->Def += (int)(k->Def * persentase);
                 else if (strcmp(tipeEfek, "Attack Up+") == 0) k->Att += (int)(k->Att * persentase);
+
+                skillId++;
                 break;
 
             case SKILL_UNLOCK:
@@ -182,13 +185,16 @@ void efekSkill(addressChar k, int skillId) {
                     target->node->data.skill->skillName,
                     target->node->data.skill->power,
                     target->node->data.skill->scale);
+
                 simpanSkill(k, target);
+                skillId++;
                 break;
         }
     } else {
         printf("Node ID %d tidak ditemukan.\n", skillId);
     }
 }
+
 
 void simpanSkill(addressChar k, SkillTree *node) {
     if (k == NULL || node == NULL || node->node->nodeType != SKILL_UNLOCK) return;
@@ -198,7 +204,7 @@ void simpanSkill(addressChar k, SkillTree *node) {
         return;
     }
 
-    SkillList *target = &k->skills[k->skillCount]; 
+    SkillList *target = &k->skills[k->skillCount];  // Ambil pointer ke elemen berikutnya
 
     strncpy(target->skillName, node->node->data.skill->skillName, sizeof(target->skillName) - 1);
     target->skillName[sizeof(target->skillName) - 1] = '\0';
@@ -219,11 +225,14 @@ void tambahItemKeKarakter(addressChar karakter, tItem* I){
 }
 
 void tampilkanInventoryKarakter(addressChar karakter) {
+    // Koordinat awal untuk tampilkan di kanan layar
     int startX = 92;  
     int startY = 9;
     int maxY = 28; 
 	   
-    for (int y = startY; y < maxY; y++) {
+    // Bersihkan area inventory dulu
+    int y;
+    for (y = startY; y < maxY; y++) {
         gotoxy(startX, y);
         printf("                          "); 
     }
@@ -234,18 +243,13 @@ void tampilkanInventoryKarakter(addressChar karakter) {
 void pilihItemKarakter(addressChar karakter) {
     tItem *dipilih = pilihItem(&(karakter->inventory));
     if (dipilih == NULL) return;
-    
-    gotoxy(30, HEIGHT + 10);
+
     printf("Menggunakan item: %s\n", dipilih->item);
 
     if (dipilih->Type == HealPotion) {
         karakter->Hp += dipilih->effect.heal.amount;
-        gotoxy(30, HEIGHT + 11);
         printf("HP bertambah %d\n", dipilih->effect.heal.amount);
-    } 
-	
-	if (dipilih->Type == BurnPotion || dipilih->Type == FreezePotion ) {
-    	gotoxy(30, HEIGHT + 11);
+    } else if (dipilih->Type == BurnPotion || dipilih->Type == FreezePotion) {
         printf("Item ini hanya bisa digunakan saat bertarung dengan musuh.\n");
         Sleep(1500);
         return;

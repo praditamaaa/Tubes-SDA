@@ -5,6 +5,10 @@ addressUser createUser(addressUser head, const STRING name, const STRING passwor
 	name(newUser) = strdup(name);
 	password(newUser) = strdup(password);
 	score(newUser) = 0;
+	
+	memset(&stats(newUser), 0, sizeof(runTimeStats));
+	questList(newUser) = Nil;
+	memset(&character(newUser), 0, sizeof(tChar));
 	next(newUser) = Nil;
 	
 	if(head == Nil) {
@@ -73,10 +77,14 @@ addressUser loadFromFile(const char* filename) {
 			newUser->score = score;
 			newUser->next = Nil;
 			
+			memset(&newUser->stats, 0, sizeof(runTimeStats));
+            newUser->questList = Nil;
+            memset(&newUser->character, 0, sizeof(tChar));
+			
             if (head == NULL) {
                 head = newUser;
             } else {
-                User* temp = head;
+                addressUser temp = head;
                 while (temp->next != NULL) temp = temp->next;
                 temp->next = newUser;
             }
