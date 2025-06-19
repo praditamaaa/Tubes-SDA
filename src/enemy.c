@@ -1,9 +1,9 @@
-#inlcude "enemy.h"
+#include "enemy.h"
 
 void initEnemy(Enemy *enemy, EnemyType Type, addressChar player){
 	srand(time(NULL));
 	
-	enemy->Type = Type
+	enemy->Type = Type;
 	
 	int playerLv = player->Lvl;	//Mengambil data Lv struct Shape
 	
@@ -13,21 +13,21 @@ void initEnemy(Enemy *enemy, EnemyType Type, addressChar player){
 	enemy->Lv = minLv + rand() % (maxLv - minLv + 1);
 	
 	switch (Type){
-		case SLIME{
+		case SLIME: {
 			enemy->Hp = 150 + 30 * enemy->Lv;
 			enemy->Att = 20 + 5 * enemy->Lv;
 			enemy->Def = 50 + 10 * enemy->Lv;
 			enemy->isDefending = 0;
 			
 			// Skill SLIME : Heavy Attack (ATTACK), Absorb (DEFENSE), Taunt (HEAL)
-			enemy->skills[0] = createSkill("HEAVY ATTACK", SKILL_ATTACK, getEnemyAtt(enemy), 1.2)
+			enemy->skills[0] = createSkill("HEAVY ATTACK", SKILL_ATTACK, getEnemyAtt(enemy), 1.2);
 			enemy->skills[1] = createSkill("ABSORB", SKILL_DEFENSE, getEnemyDef(enemy), 1.1);
 			enemy->skills[2] = createSkill("TAUNT", SKILL_HEAL, 10, 1.0);
 			
 			break;
 		}
 			
-		case WOLF{
+		case WOLF: {
 			enemy->Hp = 80 + 15 * enemy->Lv;
 			enemy->Att = 70 * 15 * enemy->Lv;
 			enemy->Def = 20 + 5 * enemy->Lv;
@@ -41,7 +41,7 @@ void initEnemy(Enemy *enemy, EnemyType Type, addressChar player){
 			break;
 		}
 		
-		case GOBLIN{
+		case GOBLIN: {
 			enemy->Hp = 100 + 20 * enemy->Lv;
 			enemy->Att = 50 + 10 * enemy->Lv;
 			enemy->Def = 40 + 5 * enemy->Lv;

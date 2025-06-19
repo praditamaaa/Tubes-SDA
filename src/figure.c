@@ -9,7 +9,8 @@ void drawShopAt(int startX, int startY){
         "|____/|_| |_|\\___/|_|    "
     };
     
-    for (int i = 0; i < 5; i++) {
+    int i;
+    for (i = 0; i < 5; i++) {
         gotoxy(startX, startY + i);
         printf("%s", lines[i]);
     }
@@ -30,7 +31,8 @@ void drawGoblinAt(int startX, int startY){
         "    /       '----'       \\"
     };
     
-    for (int i = 0; i < 11; i++) {
+    int i;
+    for (i = 0; i < 11; i++) {
         gotoxy(startX, startY + i);
         printf("%s", lines[i]);
     }
@@ -58,7 +60,8 @@ void drawSlimeAt(int startX, int startY){
     // PERBAIKAN: Gunakan sizeof untuk menghitung jumlah elemen yang benar
     int numLines = sizeof(lines) / sizeof(lines[0]);
     
-    for (int i = 0; i < numLines; i++) {
+    int i;
+    for (i = 0; i < numLines; i++) {
         gotoxy(startX, startY + i);
         printf("%s", lines[i]);
     }
@@ -83,7 +86,8 @@ void drawWolfAt(int startX, int startY){
         "     '-''-'"
     };
     
-    for (int i = 0; i < 15; i++) {
+    int i;
+    for (i = 0; i < 15; i++) {
         gotoxy(startX, startY + i);
         printf("%s", lines[i]);
     }
@@ -110,7 +114,8 @@ void drawpotionAt(int startX, int startY){
         "     ---------------       "
     };
     
-    for (int i = 0; i < 17; i++) {
+    int i;
+    for (i = 0; i < 17; i++) {
         gotoxy(startX, startY + i);
         printf("%s", lines[i]);
     }

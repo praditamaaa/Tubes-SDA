@@ -181,7 +181,7 @@ void gameLoop() {
     initMap(&gameMap);
 
     // Welcome screen dan pemilihan karakter
-    welcomeScreen(&user); 
+    welcomeScreen(user); 
 
     // Setup awal tampilan
     clearScreen();

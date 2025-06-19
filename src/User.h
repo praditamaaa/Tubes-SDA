@@ -11,6 +11,14 @@
 #include<string.h>
 #include"common.h"
 
+typedef struct user* addressUser;
+typedef struct user {
+	STRING name;
+	STRING password;	
+	int score;
+	addressUser next;
+} User;
+
 #define Nil NULL
 #define FILE_NAME "database/users.txt"
 #define MAX_STRING 100

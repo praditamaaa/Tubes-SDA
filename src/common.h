@@ -22,12 +22,12 @@
 #define WORLD_HEIGHT 100
 
 #define ITEM 3
+#define STRING char*
 
 typedef char infotype[100];
 
 typedef struct tItem* addressItem;
 typedef struct tChar* addressChar;
-typedef struct User* addressUser;
 
 typedef enum{
 	UP,
@@ -70,13 +70,6 @@ typedef struct tItem {
     addressItem next;
     addressItem prev;
 } tItem;
-
-typedef struct user {
-	STRING name;
-	STRING password;	
-	int score;
-	addressUser next;
-} User;
 
 void clearScreen();
 void gotoxy(int x, int y);

@@ -16,7 +16,7 @@ void tampilkanASCII() {
     printCenteredAtRow("                                                                                                    ",13);
 }
 
-void welcomeScreen(addressUser user) {
+void welcomeScreen(addressUser* loggedUser) {
 	const char* loadingFrames[] = {
         "Tekan Enter untuk Memulai   ",
         "Tekan Enter untuk Memulai.  ",
@@ -42,45 +42,40 @@ void welcomeScreen(addressUser user) {
 
         if (_kbhit()) {
             if (_getch() == '\r') { 
-            	menuUser(&user);
+            	addressUser users = loadFromFile(FILE_NAME);
+            	menuUser(&users, loggedUser);
                 break;
             }
         }
     }
 }
 
-void inputNama(){
-    int frame = 0;
-    int row = 16; 
-    char Nama[100];
-    printCenteredAtRow("Input Nama: ", row);
-    scanf("%99s", Nama); 
-    getchar(); 
-    
-    inputCharUser(); 
-}
-
-void menuUser(addressUser user) {
+void menuUser(addressUser* userList, addressUser* loggedUser) {
 	int pilihan;
+	char username[MAX_STRING], password[MAX_STRING];
+	
+	while(true) {
 	printCenteredAtRow("Mythora Turn Based RPG", 13);
 	printCenteredAtRow("#===================================================================================================#", 14);
 	printCenteredAtRow("| 1. New Game                                                                                       |", 15);
-	printCenteredAtRow("| 2. How To Play                                                                                    |", 16);
+	printCenteredAtRow("| 2. Load Game                                                                                      |", 16);
 	printCenteredAtRow("| 3. Exit                                                                                           |", 17);
 	printCenteredAtRow("#===================================================================================================#", 18);
 	printCenteredAtRow("Pilihan:", 19);
 	scanf("%d", &pilihan);
 	getchar(); 
-	pilihMenu(pilihan);
-}
-
-void pilihMenu(int pilihan){
+	
     switch (pilihan) {
         case 1:
-            inputNama();
+            newGameChoice(userList, loggedUser);
+            inputCharUser();
             break;
         case 2: 
-            displayHowToPlay();
+            loadGameChoice(userList, loggedUser);
+            if (*loggedUser != NULL) {
+				inputCharUser();
+				return;
+			}
             break;
         case 3:
         	exit(0);
@@ -89,34 +84,60 @@ void pilihMenu(int pilihan){
             printf("Pilihan tidak valid\n");
             break;
     }
+	
 }
 
-void displayHowToPlay() {
-    clearScreen();
-    printf("=== HOW TO PLAY ===\n\n");
-    printf("MOVEMENT CONTROLS:\n");
-    printf("------------------\n");
-    printf("UP    : W / w / ?\n");
-    printf("DOWN  : S / s / ?\n");
-    printf("LEFT  : A / a / ?\n");
-    printf("RIGHT : D / d / ?\n\n");
-    
-    printf("ACTION CONTROLS:\n");
-    printf("----------------\n");
-    printf("PAUSE GAME : ESC\n");
-    printf("QUIT GAME  : Q / q\n\n");
-    
-    printf("COMBAT CONTROLS:\n");
-    printf("----------------\n");
-    printf("A. Attack\n");
-    printf("F. Use Skill\n");
-    printf("D. Defense\n");
-    printf("R. Use Item (hanya saat battle)\n");
-    printf("E. Escape (hanya saat battle)\n\n");
-    
-    printf("Press any key to return...");
+void newGameChoice(addressUser* userList, addressUser* loggedUser) {
+	char username[MAX_STRING], password[MAX_STRING];
+
+    printf("Input username: ");
+    fgets(username, MAX_STRING, stdin);
+    username[strcspn(username, "\n")] = '\0';
+
+    printf("Input password: ");
+    fgets(password, MAX_STRING, stdin);
+    password[strcspn(password, "\n")] = '\0';
+
+    *userList = createUser(*userList, username, password);
+    saveToFile(*userList, FILE_NAME);
+
+    // set loggedUser ke node user yang baru dibuat
+    *loggedUser = *userList;
+    while (*loggedUser && strcmp(name(*loggedUser), username) != 0) {
+        *loggedUser = next(*loggedUser);
+    }
+
+    printf("Welcome, %s!\n", username);
     getch();
 }
+
+void loadGameChoice(addressUser* userList, addressUser* loggedUser) {
+	char username[MAX_STRING], password[MAX_STRING];
+
+    printf("Input Username: ");
+    fgets(username, MAX_STRING, stdin);
+    username[strcspn(username, "\n")] = '\0';
+
+    printf("Input Password: ");
+    fgets(password, MAX_STRING, stdin);
+    password[strcspn(password, "\n")] = '\0';
+
+    if (isUserValid(*userList, username, password)) {
+        // cari node user sesuai username
+        *loggedUser = *userList;
+        while (*loggedUser && strcmp(name(*loggedUser), username) != 0) {
+            *loggedUser = next(*loggedUser);
+        }
+
+        printf("Welcome back, %s!\n", username);
+        getch();
+    } else {
+        printf("Login gagal. Username/password salah!\n");
+        getch();
+    }
+}
+}
+
 
 void drawBorder() {
     setColor(15); // PUTIH
@@ -210,9 +231,9 @@ void drawUI(const Map *map, addressChar karakter) {
     gotoxy(x, 1);
     printf("HP    : %d\n", karakter->Hp);
 	gotoxy(x, 2);
-	printf("EXP   : %d / %d\n", karakter->Exp, expLevel(karakter));
+	printf("LEVEL : %d\n", karakter->Lvl);
 	gotoxy(x, 3);
-    printf("Level : %d\n", karakter->Lvl);
+    printf("EXP   : %d\n", karakter->Exp);
     gotoxy(x, 4);
     printf("Gold  : %d\n", karakter->Gold);
     gotoxy(x, 6);
@@ -283,7 +304,7 @@ void drawBox(int startX, int startY, int width, int height) {
     printf("+");
 }
 
-int drawCombatUi(addressChar k, Enemy *enemy){
+int drawCombatUi(addressChar *k, Enemy *enemy){
     int lastWidth = 0, lastHeight = 0;
     int termWidth, termHeight;
     
@@ -346,17 +367,13 @@ int drawCombatUi(addressChar k, Enemy *enemy){
         gotoxy(marginX + 3, marginY + 1);
         printf("=== YOUR STATUS ===");
         gotoxy(marginX + 3, marginY + 3);
-        printf("Level: %d", k->Lvl);
+        printf("Level: %d", (*k)->Lvl);
         gotoxy(marginX + 3, marginY + 4);
-        printf("HP: %d", k->Hp);
+        printf("HP: %d", (*k)->Hp);
         gotoxy(marginX + 3, marginY + 5);
-        printf("ATT: %d", k->Att);
+        printf("ATT: %d", (*k)->Att);
         gotoxy(marginX + 3, marginY + 6);
-        printf("DEF: %d", k->Def);
-        gotoxy(marginX + 3, marginY + 7);
-        printf("GLD: %d", k->Gold);
-        gotoxy(marginX + 3, marginY + 8);
-        printf("EXP: %d", k->Exp);
+        printf("DEF: %d", (*k)->Def);
         
         // Status Enemy (kanan atas)
         int enemyStatusX = marginX - 10 + availableWidth - 25;
@@ -391,24 +408,14 @@ int drawCombatUi(addressChar k, Enemy *enemy){
         // Label untuk setiap kotak action
         gotoxy(marginX + 2 + smallBoxWidth/2 - 3, smallBoxY + 1);
         printf("ATTACK");
-        gotoxy(marginX + 4 + smallBoxWidth/2 - 3, smallBoxY + 2);
-        printf("A");
         gotoxy(marginX + 2 + smallBoxWidth + 1 + smallBoxWidth/2 - 4, smallBoxY + 1);
         printf("SKILL");
-        gotoxy(marginX + 4 + smallBoxWidth + 1 + smallBoxWidth/2 - 4, smallBoxY + 2);
-        printf("F");
         gotoxy(marginX + 2 + (smallBoxWidth + 1) * 2 + smallBoxWidth/2 - 4, smallBoxY + 1);
         printf("DEFENSE");
-        gotoxy(marginX + 4 + (smallBoxWidth + 1) * 2 + smallBoxWidth/2 - 4, smallBoxY + 2);
-        printf("D");
         gotoxy(marginX + 2 + (smallBoxWidth + 1) * 3 + smallBoxWidth/2 - 3, smallBoxY + 1);
         printf("PAKE ITEM");
-        gotoxy(marginX + 4 + (smallBoxWidth + 1) * 3 + smallBoxWidth/2 - 3, smallBoxY + 2);
-        printf("R");
         gotoxy(marginX + 2 + (smallBoxWidth + 1) * 4 + smallBoxWidth/2 - 3, smallBoxY + 1);
         printf("ESCPAE");
-        gotoxy(marginX + 4 + (smallBoxWidth + 1) * 4 + smallBoxWidth/2 - 3, smallBoxY + 2);
-        printf("E");
         
         // Tampilkan skill enemy di bawah figure
         gotoxy(enemyStatusX, marginY + 7);
@@ -416,9 +423,10 @@ int drawCombatUi(addressChar k, Enemy *enemy){
                enemy->skills[0].name,
                enemy->skills[1].name, 
                enemy->skills[2].name);
-               
+        
+        // Instruksi input
         gotoxy(marginX + 4, termHeight - 15);
-        printf("Log Battle");
+        printf("Press A (Attack), F (Skill), D (Defense), R (Pake Item), E (Escape)");
                 
         // Update ukuran terakhir
         lastWidth = termWidth;
