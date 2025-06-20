@@ -1,5 +1,4 @@
 #include "gameLoop.h"
-
 void combatLoop(addressChar player, Enemy *enemy) {
     EffectQueue enemyEffectQueue = {NULL, NULL}; 
     
@@ -55,8 +54,11 @@ void combatLoop(addressChar player, Enemy *enemy) {
             int gold = 40 + (enemy->Lv * 5);
             player->Exp += exp;
             player->Gold += gold;
+            setColor(10);
 		    printf("VICTORY\n");
+		    setColor(10);
 		    printf("Kamu mendapatkan %d EXP dan %d Gold!\n", exp, gold);
+		    setColor(10);
 		    printf("Total EXP: %d | Level: %d\n", player->Exp, player->Lvl);
             levelUp(player);
             
