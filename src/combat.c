@@ -16,12 +16,14 @@ void doPlayerAttack(addressChar player, Enemy *enemy) {
     if (enemy->Hp < 0) enemy->Hp = 0;
     
     gotoxy(6,23);
+    setColor(10);
     printf("KAmu mmeneyrang dengan %d damage!", damage);
 }
 
 void doPlayerDefense(addressChar player) {
     player->isDefending = 1;
     gotoxy(6,23);
+    setColor(10);
     printf("kamu bertahan!");
 }
 
@@ -33,10 +35,10 @@ void usePlayerSkill(addressChar player, Enemy *enemy) {
     }
 
 	gotoxy(6, 22);
+	setColor(10);
     printf("Pilih Skill:\n");
 
-	int i;
-    for (i = 0; i < player->skillCount; i++) {
+    for (int i = 0; i < player->skillCount; i++) {
     	gotoxy(6,22 + i);
         printf("%d. %s (Power: %d, Scale: %.2f)\n",
                i + 1,
@@ -67,6 +69,7 @@ void usePlayerSkill(addressChar player, Enemy *enemy) {
     if (enemy->Hp < 0) enemy->Hp = 0;
 
     gotoxy(6, 27);
+    setColor(10);
     printf("Kamu menggunakan skill %s dan memberikan %d damage ke musuh!\n", 
            skill->skillName, damage);
 
@@ -76,22 +79,23 @@ void usePlayerSkill(addressChar player, Enemy *enemy) {
 
 void pakeItem(addressChar karakter, Enemy *enemy, EffectQueue *queue) {
     tItem *dipilih = pilihItem(&(karakter->inventory));
-    if (dipilih == NULL) return;
+    if (dipilih == NULL) return;	
 
-    gotoxy(30, HEIGHT + 10);
+    gotoxy(6, 25);
     printf("Menggunakan item: %s", dipilih->item);
 
     switch (dipilih->Type) {
         case HealPotion:
             karakter->Hp += dipilih->effect.heal.amount;
-            gotoxy(30, HEIGHT + 11);
+            gotoxy(6, 27);
+            setColor(10);
             printf("HP bertambah %d", dipilih->effect.heal.amount);
             break;
 
         case BurnPotion:
         case FreezePotion:
             enqueue(queue, dipilih->effect.status);
-            gotoxy(30, HEIGHT + 11);
+            gotoxy(6, 26);
             printf("Efek %s diterapkan pada musuh!", 
                    dipilih->Type == BurnPotion ? "Burn" : "Freeze");
             break;
@@ -103,7 +107,7 @@ void pakeItem(addressChar karakter, Enemy *enemy, EffectQueue *queue) {
         hapusItem(&(karakter->inventory), index);
     }
 
-    Sleep(1500);
+    Sleep(2000);
 }
 
 
@@ -113,10 +117,12 @@ bool doPlayerEscape() {
     
     if (roll < escapeChance) {
     	gotoxy(6,23);
+    	setColor(10);
         printf("berhasil kabur");
         return true;
     } else {
     	gotoxy(6,23);
+    	setColor(10);
         printf("gagal kabur!");
         return false;
     }
@@ -138,13 +144,15 @@ void EnemyAttack(Enemy *enemy, addressChar player) {
     if (player->Hp < 0) player->Hp = 0;
     
     gotoxy(6,24);
+    setColor(12);
     printf("Musuh menyerang dengan %d damage!", damage);
 }
 
 void EnemyDefense(Enemy *enemy) {
     enemy->isDefending = 1;
     gotoxy(6,24);
-    printf("Musuh bertahan!");
+    setColor(12);
+    printf("Musuh bertahan!                          ");
 }
 
 void EnemySkill(Enemy *enemy, addressChar player) {
@@ -152,7 +160,8 @@ void EnemySkill(Enemy *enemy, addressChar player) {
     Skill *skill = &enemy->skills[skillIndex];
     
     gotoxy(6,24);
-    printf("Musuh menggunakna %s!", skill->name);
+    setColor(12);
+    printf("Musuh menggunakna %s!                    ", skill->name);
     
     switch(skill->type) {
         case SKILL_ATTACK: {
@@ -165,6 +174,7 @@ void EnemySkill(Enemy *enemy, addressChar player) {
             
             player->Hp -= damage;
             gotoxy(6,25);
+            setColor(12);
             printf("Musush menyerang dengan skill -%dhp", damage);
             
             if (player->Hp < 0) player->Hp = 0;
@@ -173,13 +183,15 @@ void EnemySkill(Enemy *enemy, addressChar player) {
         case SKILL_DEFENSE:
             enemy->isDefending = 1;
             gotoxy(6,25);
-            printf("Defend mussuh naik");
+            setColor(12);
+            printf("Defend mussuh naik                         ");
             break;
         case SKILL_HEAL: {
             int heal = (int)(skill->power * skill->scale);
             enemy->Hp += heal;
             gotoxy(6,25);
-            printf("musuh ngeheal +%dhp", heal);
+            setColor(12);
+            printf("musuh ngeheal +%dhp                        ", heal);
             break;
         }
     }
@@ -196,8 +208,8 @@ void enqueue(EffectQueue *List, StatusEffect effect) {
         List->last->next = newNode;
         List->last = newNode;
     }
-    
-    printf("\nEfek %d (durasi: %d) ditambahkan.", effect.type, effect.duration);
+    //gotoxy(6,27);
+    //printf("\nEfek %d (durasi: %d) ditambahkan.", effect.type, effect.duration);
 }
 
 void updateEffect(EffectQueue *List, int *targetHP) {
@@ -207,13 +219,19 @@ void updateEffect(EffectQueue *List, int *targetHP) {
 
     switch (efek->type) {
         case STATUS_BURN:
-            printf("\nMusuh terbakar! -%d HP", efek->damage);
+        	gotoxy(6,27);
+        	setColor(14);// warna merah 
+            printf("Musuh terbakar! -%d HP                 ", efek->damage);
             *targetHP -= efek->damage;
             if (*targetHP < 0) *targetHP = 0;
+            Sleep(2000);
             break;
 
         case STATUS_FREEZE:
-            printf("\nMusuh beku! Tidak bisa menyerang.");
+        	gotoxy(6,27);
+        	setColor(14); //warna biru terang
+            printf("Musuh beku! Tidak bisa menyerang.        ");
+            Sleep(2000);
             break;
     }
 
@@ -224,6 +242,9 @@ void updateEffect(EffectQueue *List, int *targetHP) {
         List->first = List->first->next;
         if (List->first == NULL) List->last = NULL;
         free(hapus);
-        printf("\nEfek selesai.");
+        gotoxy(6,27);
+        setColor(10);
+        printf("Efek selesai.                          ");
+        Sleep(2000);
     }
 }
