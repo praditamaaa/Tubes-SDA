@@ -47,8 +47,7 @@ void tampilkanInventory(Inventory *inv, int x, int y) {
         gotoxy(x, y);
         printf("Inventory Masih Kosong.");
     } else {
-    	int i;
-        for (i = 0; i < inv->count; i++) {
+        for (int i = 0; i < inv->count; i++) {
             gotoxy(x, y + i);
             printf("%d. %s (%d)", i + 1, inv->items[i].item, inv->items[i].bag);
         }
@@ -66,37 +65,32 @@ int isNumber(const char *str) {
 
 tItem* pilihItem(Inventory *inv) {
     if (inv->count == 0) {
-    	gotoxy(6, 22);
-    	printf("inventory masih kosong");
-        return 0;
+        gotoxy(6, 22);
+        printf("Inventory masih kosong");
+        return NULL;
     }
-    
-    gotoxy(6, 23);
+
+    gotoxy(6, 22);
     printf("Pilih item yang ingin digunakan");
-    gotoxy(6, 24);
+    gotoxy(6, 23);
     printf("Ketik nama atau nomor item: ");
-
-    // Bersihkan stdin buffer
-    int ch;
-    while ((ch = getchar()) != '\n' && ch != EOF);
-
-	gotoxy(57, HEIGHT + 10);
+    
+    gotoxy(33, 23);
     char input[50];
     fgets(input, sizeof(input), stdin);
-    input[strcspn(input, "\n")] = '\0'; // hapus newline dari fgets
+    
+    // Hapus newline dari fgets
+    input[strcspn(input, "\n")] = '\0';
 
     int index = -1;
 
-    // Cek apakah input berupa angka
     if (isNumber(input)) {
         int nomor = atoi(input);
         if (nomor >= 1 && nomor <= inv->count) {
             index = nomor - 1;
         }
     } else {
-        // Cocokkan dengan nama item
-        int i;
-        for (i = 0; i < inv->count; i++) {
+        for (int i = 0; i < inv->count; i++) {
             if (strcmp(inv->items[i].item, input) == 0) {
                 index = i;
                 break;
@@ -105,6 +99,7 @@ tItem* pilihItem(Inventory *inv) {
     }
 
     if (index == -1) {
+        gotoxy(6, 27);
         printf("Item tidak ditemukan.\n");
         Sleep(1500);
         return NULL;
@@ -113,10 +108,9 @@ tItem* pilihItem(Inventory *inv) {
     return &inv->items[index];
 }
 
+
 void hapusItem(Inventory *inv, int index) {
-    printf("Item '%s' habis dan dihapus dari inventory.\n", inv->items[index].item);
-    int i;
-    for (i = index; i < inv->count - 1; i++) {
+    for (int i = index; i < inv->count - 1; i++) {
         inv->items[i] = inv->items[i + 1];
     }
     inv->count--;
