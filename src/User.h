@@ -27,6 +27,7 @@ typedef struct user {
 
 #define Nil NULL
 #define FILE_NAME "database/users.txt"
+#define USER_SAVE_FOLDER "./database/users/"
 #define MAX_STRING 100
 #define name(user) ((user)->name)
 #define password(user) ((user)->password)
@@ -42,5 +43,13 @@ void saveToFile(addressUser head, const char* filename);
 addressUser loadFromFile(const char* filename);
 addressUser deleteUser(addressUser head, const STRING username, const STRING password, const char* filePath);
 boolean isUserValid(addressUser head, const STRING username, const STRING password);
+addressChar loadCharacterFromFile(addressUser user);
+void saveCharacterToFile(addressUser user);
+void saveUserQuests(addressUser user);
+void loadUserQuests(addressUser user);
+void saveUserStats(addressUser user);
+void loadUserStats(addressUser user);
+void saveUser(addressUser user);
+void loadUser(addressUser user);
 
 #endif
